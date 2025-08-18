@@ -61,7 +61,8 @@ messages:
 
       - Check for shared surnames in the publisher list
 
-      - Family name might not match completely, use fuzzy match
+      - Use Fuzzy matching when comparing family names, for example Dālbergs and
+      Dālberga is the same family name.
 
       - Look for contextual indicators of family relationships
 
@@ -71,7 +72,7 @@ messages:
 
       <output>
 
-      - The reports array must be sorted by publisher name.
+      - The reports array must be sorted by publisher family name.
 
       - The array must include all known publishers, even if they havent given
       any report.
@@ -82,7 +83,7 @@ messages:
 
       {
           "reports": [
-              [{"name": "Kalle Johansson", "isActive":true, "hours":25, "studies": 3, "comment": "Beteljobb 10h, sjuk 1d", "originalText": "Kalle: 25h, 3 studies, beteljobb 10h, sjuk 1d", "isNew": false, "matchConfidence": "high|medium|low", "reportedBy": self|family_member_name"  }]
+              [{"name": "Kalle Johansson", "isActive":true, "hours":25, "studies": 3, "comment": "Beteljobb 10h, sjuk 1d", "originalText": "Kalle: 25h, 3 studies, beteljobb 10h, sjuk 1d", "isNew": false, "matchConfidence": "high|medium|low", "reportedBy": self|family_member_name"  , "reasoning": "Here, describe how you have been thinking when filling this report"}]
           ],
          "reasoning": "Here, describe how you have been thinking when filing the reports"
       }
