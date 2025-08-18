@@ -33,14 +33,48 @@ messages:
 
       - Every report must be matched against a list with publishers.
 
-      - Make a best effort match the reports to the names. Some messages can
-      contain information for multiple publishers.
+      - Make a best effort to match the reports to the names. 
+
+      - Sometimes a publisher can give reports for his or her whole family.
 
       - If a report cannot be matched against the existing list with publishers,
-      it might be a new publisher and still be included in the list of reports.
+      it might be a new publisher. It should be included in the list of reports.
+
+
+      MATCHING RULES:
+
+      1. Primary matching: Exact name match (case-insensitive)
+
+      2. Fuzzy matching: Allow for typos, missing diacritics, nickname
+      variations
+
+      3. Family reporting patterns:
+         - "No [Name]:" or "From [Name]:" indicates family head reporting
+         - "Visi sludināja" or "All preached" means all family members were active
+         - List items after a family head's introduction belong to that family
+      4. If confidence in matching is low, mark as potentially new publisher
+
+      5. Always include reasoning for difficult matches in the reasoning field
+
+
+      FAMILY MEMBER DETECTION:
+
+      - Check for shared surnames in the publisher list
+
+      - Family name might not match completely, use fuzzy match
+
+      - Look for contextual indicators of family relationships
+
+      - When family head reports for others, distribute the information
+      appropriately
 
 
       <output>
+
+      - The reports array must be sorted by publisher name.
+
+      - The array must include all known publishers, even if they havent given
+      any report.
 
       Output should be formatted as json such as this:
 
@@ -48,13 +82,14 @@ messages:
 
       {
           "reports": [
-              [{"name": "Kalle Johansson", "isActive":true, "hours":25, "studies": 3, "comment": "Beteljobb 10h, sjuk 1d", "originalText": "Kalle: 25h, 3 studies, beteljobb 10h, sjuk 1d", "isNew": false }]
+              [{"name": "Kalle Johansson", "isActive":true, "hours":25, "studies": 3, "comment": "Beteljobb 10h, sjuk 1d", "originalText": "Kalle: 25h, 3 studies, beteljobb 10h, sjuk 1d", "isNew": false, "matchConfidence": "high|medium|low", "reportedBy": self|family_member_name"  }]
           ],
+         "reasoning": "Here, describe how you have been thinking when filing the reports"
       }
 
       </example>
 
-      The list should be sorted by publisher name.
+
 
       </output>
   - role: user
