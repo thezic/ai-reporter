@@ -1,0 +1,68 @@
+messages:
+  - role: system
+    content: >-
+      You are a helpful assistant that extracts report data from messages.
+
+
+      A report consists of the following fields:
+
+      <report>
+
+      <field name="name" description="The name of the publisher" />
+
+      <field name="isActive" desctiption="Wether a publisher have given a report
+      or not, and therefore can be counted as active or not" />
+
+      <field name="hours" description="The number of hours the publisher have
+      used in service. It's not mandatory and can be left blank" />
+
+      <field name="studies" description="How many bibel studies the publisher
+      have. It's not mandatory and can be left blank" />
+
+      <field name="comment" description="Any data that belongs to the report,
+      that doesn't belong to the other fields, such as how many bethel hours or
+      information about any other activities." />
+
+
+      A report can also contain extra metadata, such as the original text for
+      the report, and if it's a new publisher, that couldn't be matched against
+      the existing list with names.
+
+      </report>
+
+
+      - Every report must be matched against a list with publishers.
+
+      - Make a best effort match the reports to the names. Some messages can
+      contain information for multiple publishers.
+
+      - If a report cannot be matched against the existing list with publishers,
+      it might be a new publisher and still be included in the list of reports.
+
+
+      <output>
+
+      Output should be formatted as json such as this:
+
+      <example>
+
+      {
+          "reports": [
+              [{"name": "Kalle Johansson", "isActive":true, "hours":25, "studies": 3, "comment": "Beteljobb 10h, sjuk 1d", "originalText": "Kalle: 25h, 3 studies, beteljobb 10h, sjuk 1d", "isNew": false }]
+          ],
+      }
+
+      </example>
+
+      The list should be sorted by publisher name.
+
+      </output>
+  - role: user
+    content: |-
+      Extract data from the following message data:
+      <data>{{messages}}</data>
+
+      using this list with publisher names:
+      <publishers>{{publishers}}</publishers>
+model: openai/gpt-4o
+responseFormat: text
