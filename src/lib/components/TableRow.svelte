@@ -7,6 +7,7 @@
 		isEditMode: boolean;
 		isNewRow?: boolean;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
+		onUpdatePublisher?: (publisherId: string, data: Partial<Publisher>) => void;
 		onAddPublisher?: (name: string) => void;
 		onDeletePublisher?: (publisherId: string) => void;
 	}
@@ -17,6 +18,7 @@
 		isEditMode,
 		isNewRow = false,
 		onUpdateReport,
+		onUpdatePublisher,
 		onAddPublisher,
 		onDeletePublisher
 	}: Props = $props();
@@ -30,6 +32,8 @@
 		if (isNewRow && name.trim() && onAddPublisher) {
 			onAddPublisher(name.trim());
 			name = '';
+		} else if (!isNewRow && publisher && onUpdatePublisher && name.trim() !== publisher.name) {
+			onUpdatePublisher(publisher.id, { name: name.trim() });
 		}
 	}
 
@@ -68,9 +72,8 @@
 			type="text"
 			bind:value={name}
 			onblur={handleNameBlur}
-			readonly={!isNewRow}
-			class="w-full rounded border p-2 {isNewRow ? 'border-gray-300' : 'border-transparent'} 
-				   {isNewRow ? 'focus:border-blue-500' : ''}"
+			readonly={false}
+			class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
 			placeholder={isNewRow ? 'Enter publisher name...' : ''}
 		/>
 	</td>

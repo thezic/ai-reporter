@@ -1,6 +1,11 @@
 import OpenAI from 'openai';
 import type { Publisher, Report } from '$lib/types';
 
+export interface ParseResult {
+	newPublishers: Publisher[];
+	reports: Report[];
+}
+
 interface AIResponse {
 	reports: Array<{
 		name: string;
@@ -31,7 +36,7 @@ export class AIService {
 		});
 	}
 
-	async parseMessages(messages: string, publishers: Publisher[]): Promise<Report[]> {
+	async parseMessages(messages: string, publishers: Publisher[]): Promise<ParseResult> {
 		const publisherNames = publishers.map((p) => p.name);
 
 		const userPrompt = `Extract data from the following message data:
@@ -64,7 +69,7 @@ using this list with publisher names:
 			}
 
 			const aiResponse: AIResponse = JSON.parse(content);
-			return this.convertAIResponseToReports(aiResponse, publishers);
+			return this.convertAIResponseToParseResult(aiResponse, publishers);
 		} catch (error) {
 			if (error instanceof Error) {
 				throw new Error(`Failed to parse messages: ${error.message}`);
@@ -126,20 +131,40 @@ Output should be formatted as json such as this:
 </output>`;
 	}
 
-	private convertAIResponseToReports(aiResponse: AIResponse, publishers: Publisher[]): Report[] {
-		return aiResponse.reports.map((aiReport) => {
-			let publisherId: string;
+	private convertAIResponseToParseResult(
+		aiResponse: AIResponse,
+		existingPublishers: Publisher[]
+	): ParseResult {
+		const newPublishers: Publisher[] = [];
+		const reports: Report[] = [];
+		const publisherMap = new Map<string, string>(); // name -> id mapping
 
-			if (aiReport.isNew) {
+		// Create map of existing publishers
+		existingPublishers.forEach((pub) => {
+			publisherMap.set(pub.name.toLowerCase(), pub.id);
+		});
+
+		aiResponse.reports.forEach((aiReport) => {
+			let publisherId: string;
+			const normalizedName = aiReport.name.toLowerCase();
+
+			if (aiReport.isNew || !publisherMap.has(normalizedName)) {
+				// Create new publisher
 				publisherId = crypto.randomUUID();
+				const newPublisher: Publisher = {
+					id: publisherId,
+					name: aiReport.name, // Use original case from AI
+					createdAt: new Date()
+				};
+				newPublishers.push(newPublisher);
+				publisherMap.set(normalizedName, publisherId);
 			} else {
-				const publisher = publishers.find(
-					(p) => p.name.toLowerCase() === aiReport.name.toLowerCase()
-				);
-				publisherId = publisher?.id || crypto.randomUUID();
+				// Use existing publisher
+				publisherId = publisherMap.get(normalizedName)!;
 			}
 
-			return {
+			// Create report
+			const report: Report = {
 				id: crypto.randomUUID(),
 				publisherId,
 				active: aiReport.isActive,
@@ -147,6 +172,9 @@ Output should be formatted as json such as this:
 				comment: aiReport.comment || '',
 				updatedAt: new Date()
 			};
+			reports.push(report);
 		});
+
+		return { newPublishers, reports };
 	}
 }

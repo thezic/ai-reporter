@@ -24,7 +24,12 @@ export class PublisherState {
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
 			createdAt: new Date()
 		};
-		this.publishers.push(newPublisher);
+		this.publishers = [...this.publishers, newPublisher];
+		await this.savePublishers();
+	}
+
+	async addPublisherObject(publisher: Publisher): Promise<void> {
+		this.publishers = [...this.publishers, publisher];
 		await this.savePublishers();
 	}
 
@@ -36,7 +41,9 @@ export class PublisherState {
 	async updatePublisher(id: string, data: Partial<Publisher>): Promise<void> {
 		const index = this.publishers.findIndex((p) => p.id === id);
 		if (index !== -1) {
-			this.publishers[index] = { ...this.publishers[index], ...data };
+			const updatedPublishers = [...this.publishers];
+			updatedPublishers[index] = { ...updatedPublishers[index], ...data };
+			this.publishers = updatedPublishers;
 			await this.savePublishers();
 		}
 	}

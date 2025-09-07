@@ -23,13 +23,17 @@ export class ReportState {
 		const existingIndex = this.reports.findIndex((r) => r.publisherId === publisherId);
 
 		if (existingIndex !== -1) {
-			this.reports[existingIndex] = {
-				...this.reports[existingIndex],
+			// Update existing report with proper reactivity
+			const updatedReports = [...this.reports];
+			updatedReports[existingIndex] = {
+				...updatedReports[existingIndex],
 				...data,
 				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				updatedAt: new Date()
 			};
+			this.reports = updatedReports;
 		} else {
+			// Add new report with proper reactivity
 			const newReport: Report = {
 				id: crypto.randomUUID(),
 				publisherId,
@@ -37,7 +41,7 @@ export class ReportState {
 				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				updatedAt: new Date()
 			};
-			this.reports.push(newReport);
+			this.reports = [...this.reports, newReport];
 		}
 		await this.saveReports();
 	}

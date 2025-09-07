@@ -5,7 +5,7 @@
 	import PublisherTable from '$lib/components/PublisherTable.svelte';
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
-	import { AIService } from '$lib/services/AIService';
+	import { AIService, type ParseResult } from '$lib/services/AIService';
 	import { ExportService } from '$lib/services/ExportService';
 	import type { CombinedData } from '$lib/types';
 
@@ -30,9 +30,18 @@
 		isParsingMessages = true;
 		try {
 			const aiService = new AIService(appState.settings.aiApiKey);
-			const parsedReports = await aiService.parseMessages(messages, appState.publishers.publishers);
+			const parseResult: ParseResult = await aiService.parseMessages(
+				messages,
+				appState.publishers.publishers
+			);
 
-			for (const report of parsedReports) {
+			// First, add any new publishers to the publisher list
+			for (const newPublisher of parseResult.newPublishers) {
+				await appState.publishers.addPublisherObject(newPublisher);
+			}
+
+			// Then, create/update reports for all publishers (existing + new)
+			for (const report of parseResult.reports) {
 				await appState.reports.updateReport(report.publisherId, {
 					active: report.active,
 					hours: report.hours,
@@ -55,6 +64,10 @@
 		data: { active?: boolean; hours?: number; comment?: string }
 	) {
 		await appState.reports.updateReport(publisherId, data);
+	}
+
+	async function handleUpdatePublisher(publisherId: string, data: { name?: string }) {
+		await appState.publishers.updatePublisher(publisherId, data);
 	}
 
 	async function handleAddPublisher(name: string) {
@@ -134,6 +147,7 @@
 				isEditMode={appState.publishers.isEditMode}
 				onToggleEditMode={handleToggleEditMode}
 				onUpdateReport={handleUpdateReport}
+				onUpdatePublisher={handleUpdatePublisher}
 				onAddPublisher={handleAddPublisher}
 				onDeletePublisher={handleDeletePublisher}
 			/>

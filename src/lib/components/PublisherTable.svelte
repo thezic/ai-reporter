@@ -8,6 +8,7 @@
 		isEditMode: boolean;
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
+		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
 		onAddPublisher: (name: string) => void;
 		onDeletePublisher: (publisherId: string) => void;
 	}
@@ -18,6 +19,7 @@
 		isEditMode,
 		onToggleEditMode,
 		onUpdateReport,
+		onUpdatePublisher,
 		onAddPublisher,
 		onDeletePublisher
 	}: Props = $props();
@@ -58,6 +60,7 @@
 						report={getReportForPublisher(publisher.id)}
 						{isEditMode}
 						{onUpdateReport}
+						{onUpdatePublisher}
 						{onDeletePublisher}
 					/>
 				{/each}

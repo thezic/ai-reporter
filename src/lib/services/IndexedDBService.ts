@@ -43,7 +43,9 @@ export class IndexedDBService implements IStorageService<Publisher[] | Report[]>
 
 		await store.clear();
 		for (const item of data) {
-			await store.put(item);
+			// Serialize Date objects to strings for IndexedDB storage
+			const serializedItem = this.serializeItem(item);
+			await store.put(serializedItem);
 		}
 
 		return new Promise((resolve, reject) => {
@@ -62,7 +64,15 @@ export class IndexedDBService implements IStorageService<Publisher[] | Report[]>
 			const request = store.getAll();
 
 			request.onsuccess = () => {
-				resolve(request.result.length > 0 ? request.result : null);
+				if (request.result.length === 0) {
+					resolve(null);
+				} else {
+					// Deserialize Date strings back to Date objects
+					const deserializedItems = request.result.map((item) => this.deserializeItem(item)) as
+						| Publisher[]
+						| Report[];
+					resolve(deserializedItems);
+				}
 			};
 			request.onerror = () => reject(request.error);
 		});
@@ -80,5 +90,33 @@ export class IndexedDBService implements IStorageService<Publisher[] | Report[]>
 			request.onsuccess = () => resolve();
 			request.onerror = () => reject(request.error);
 		});
+	}
+
+	private serializeItem(item: Publisher | Report): Record<string, unknown> {
+		const serialized = { ...item } as Record<string, unknown>;
+
+		// Convert Date objects to ISO strings
+		if ('createdAt' in serialized && serialized.createdAt instanceof Date) {
+			serialized.createdAt = serialized.createdAt.toISOString();
+		}
+		if ('updatedAt' in serialized && serialized.updatedAt instanceof Date) {
+			serialized.updatedAt = serialized.updatedAt.toISOString();
+		}
+
+		return serialized;
+	}
+
+	private deserializeItem(item: Record<string, unknown>): Publisher | Report {
+		const deserialized = { ...item };
+
+		// Convert ISO strings back to Date objects
+		if ('createdAt' in deserialized && typeof deserialized.createdAt === 'string') {
+			deserialized.createdAt = new Date(deserialized.createdAt);
+		}
+		if ('updatedAt' in deserialized && typeof deserialized.updatedAt === 'string') {
+			deserialized.updatedAt = new Date(deserialized.updatedAt);
+		}
+
+		return deserialized as unknown as Publisher | Report;
 	}
 }
