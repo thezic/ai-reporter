@@ -52,9 +52,28 @@ Test setup file: `vitest-setup-client.ts` (for browser tests only)
 - `static/` - Static assets
 - Standard SvelteKit project structure with `$lib` alias for `src/lib`
 
+## AI Service Reporter Application
+
+This project implements an AI-powered service reporter that parses messages from publishers and generates reports. Key features:
+
+- **Flux Pattern**: Uses Svelte 5 `$state` and `$derive` for reactive state management
+- **Data Persistence**: LocalStorage for settings, IndexedDB for publishers and reports
+- **AI Integration**: OpenAI SDK for message parsing (configured via reports.prompt.yml)
+- **Export**: CSV and Excel export functionality
+- **Edit Mode**: Toggle between view and edit modes for managing publishers
+
+## Architecture
+
+- **State Management**: `src/lib/state/` - AppState, PublisherState, ReportState, SettingsState
+- **Services**: `src/lib/services/` - AIService, ExportService, Storage services
+- **Components**: `src/lib/components/` - Reusable Svelte components
+- **Types**: `src/lib/types/` - TypeScript interfaces
+
 ## Development Notes
 
 - Uses Svelte 5 (latest version)
 - Tailwind CSS v4 configuration in `vite.config.ts`
 - TypeScript with strict mode enabled
 - ESLint config uses flat config format
+- All components follow props-down, events-up pattern
+- Business logic is kept in state classes, not components
