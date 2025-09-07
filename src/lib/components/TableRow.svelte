@@ -28,6 +28,23 @@
 	let hours = $state(report?.hours ?? undefined);
 	let comment = $state(report?.comment || '');
 
+	let isUpdating = false;
+
+	// Update local state when props change
+	$effect(() => {
+		if (publisher && !isUpdating) {
+			name = publisher.name || '';
+		}
+	});
+
+	$effect(() => {
+		if (!isUpdating) {
+			active = report?.active ?? undefined;
+			hours = report?.hours ?? undefined;
+			comment = report?.comment || '';
+		}
+	});
+
 	function handleNameBlur() {
 		if (isNewRow && name.trim() && onAddPublisher) {
 			onAddPublisher(name.trim());
@@ -44,19 +61,31 @@
 	}
 
 	function handleActiveChange(event: Event) {
+		isUpdating = true;
 		const target = event.target as HTMLSelectElement;
 		active = target.value === '' ? undefined : target.value === 'true';
 		handleReportUpdate();
+		setTimeout(() => {
+			isUpdating = false;
+		}, 0);
 	}
 
 	function handleHoursChange(event: Event) {
+		isUpdating = true;
 		const target = event.target as HTMLInputElement;
 		hours = target.value === '' ? undefined : parseInt(target.value, 10);
 		handleReportUpdate();
+		setTimeout(() => {
+			isUpdating = false;
+		}, 0);
 	}
 
 	function handleCommentBlur() {
+		isUpdating = true;
 		handleReportUpdate();
+		setTimeout(() => {
+			isUpdating = false;
+		}, 0);
 	}
 
 	function handleDelete() {
