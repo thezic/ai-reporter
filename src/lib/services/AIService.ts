@@ -116,7 +116,9 @@ FAMILY MEMBER DETECTION:
 
 <output>
 - The reports array must be sorted by publisher family name.
-- The array must include all known publishers, even if they haven't given any report.
+- IMPORTANT: Only include publishers who have actually given a report or are explicitly mentioned with activity data in the message.
+- Do NOT include publishers who are only in the provided publisher names list but have no corresponding report data in the message.
+- If a publisher is not mentioned in the message data, do not include them in the reports array.
 
 Output should be formatted as json such as this:
 

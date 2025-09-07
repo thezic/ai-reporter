@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Publisher, Report } from '$lib/types';
+	import { flip } from 'svelte/animate';
 
 	interface Props {
 		publisher?: Publisher;
