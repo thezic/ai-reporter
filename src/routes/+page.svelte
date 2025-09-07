@@ -5,7 +5,7 @@
 	import PublisherTable from '$lib/components/PublisherTable.svelte';
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
-	import { AIService, type ParseResult } from '$lib/services/AIService';
+	import { AIService, type ParseResult, type ReportMetadata } from '$lib/services/AIService';
 	import { ExportService } from '$lib/services/ExportService';
 	import type { CombinedData } from '$lib/types';
 
@@ -14,6 +14,8 @@
 
 	let messages = $state('');
 	let isParsingMessages = $state(false);
+	let reportMetadata = $state<Map<string, ReportMetadata>>(new Map());
+	let globalReasoning = $state<string>('');
 
 	onMount(async () => {
 		await appState.init();
@@ -49,11 +51,13 @@
 				});
 			}
 
+			// Store metadata temporarily (not persisted)
+			reportMetadata = parseResult.metadata;
+			globalReasoning = parseResult.globalReasoning;
+
 			messages = '';
 		} catch (error) {
-			alert(
-				`Failed to parse messages: ${error instanceof Error ? error.message : 'Unknown error'}`
-			);
+			appState.error = error instanceof Error ? error.message : 'Unknown error';
 		} finally {
 			isParsingMessages = false;
 		}
@@ -145,6 +149,8 @@
 				publishers={appState.publishers.publishers}
 				reports={appState.reports.reports}
 				isEditMode={appState.publishers.isEditMode}
+				{reportMetadata}
+				{globalReasoning}
 				onToggleEditMode={handleToggleEditMode}
 				onUpdateReport={handleUpdateReport}
 				onUpdatePublisher={handleUpdatePublisher}

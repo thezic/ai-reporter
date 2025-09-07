@@ -1,9 +1,18 @@
 import OpenAI from 'openai';
 import type { Publisher, Report } from '$lib/types';
 
+export interface ReportMetadata {
+	originalText?: string;
+	matchConfidence: 'high' | 'medium' | 'low';
+	reportedBy: string;
+	reasoning: string;
+}
+
 export interface ParseResult {
 	newPublishers: Publisher[];
 	reports: Report[];
+	metadata: Map<string, ReportMetadata>; // publisherId -> metadata
+	globalReasoning: string;
 }
 
 interface AIResponse {
@@ -71,9 +80,50 @@ using this list with publisher names:
 			const aiResponse: AIResponse = JSON.parse(content);
 			return this.convertAIResponseToParseResult(aiResponse, publishers);
 		} catch (error) {
+			// Handle specific OpenAI/AI provider errors
+			if (error && typeof error === 'object' && 'status' in error) {
+				const status = (error as any).status;
+				const message = (error as any).message || 'Unknown AI service error';
+
+				switch (status) {
+					case 429:
+						throw new Error('Rate limit exceeded. Please wait a few minutes before trying again.');
+					case 401:
+						throw new Error('Invalid API key. Please check your AI API key in settings.');
+					case 403:
+						throw new Error(
+							'Access forbidden. Your API key may not have the required permissions.'
+						);
+					case 404:
+						throw new Error('AI model not found. The requested model may not be available.');
+					case 500:
+						throw new Error('AI service is temporarily unavailable. Please try again later.');
+					case 502:
+					case 503:
+					case 504:
+						throw new Error(
+							'AI service is experiencing issues. Please try again in a few minutes.'
+						);
+					default:
+						throw new Error(`AI service error (${status}): ${message}`);
+				}
+			}
+
+			// Handle JSON parsing errors
+			if (error instanceof SyntaxError) {
+				throw new Error('Invalid response format from AI service. Please try again.');
+			}
+
+			// Handle network errors
+			if (error instanceof TypeError && error.message.includes('fetch')) {
+				throw new Error('Network error. Please check your internet connection and try again.');
+			}
+
+			// Handle generic errors
 			if (error instanceof Error) {
 				throw new Error(`Failed to parse messages: ${error.message}`);
 			}
+
 			throw new Error('Unknown error occurred while parsing messages');
 		}
 	}
@@ -116,6 +166,7 @@ FAMILY MEMBER DETECTION:
 
 <output>
 - The reports array must be sorted by publisher family name.
+- The comment should never contain the original message. It's only used for extra information such as bethel work, sickness, conventions, etc...
 - IMPORTANT: Only include publishers who have actually given a report or are explicitly mentioned with activity data in the message.
 - Do NOT include publishers who are only in the provided publisher names list but have no corresponding report data in the message.
 - If a publisher is not mentioned in the message data, do not include them in the reports array.
@@ -139,6 +190,7 @@ Output should be formatted as json such as this:
 	): ParseResult {
 		const newPublishers: Publisher[] = [];
 		const reports: Report[] = [];
+		const metadata = new Map<string, ReportMetadata>();
 		const publisherMap = new Map<string, string>(); // name -> id mapping
 
 		// Create map of existing publishers
@@ -175,8 +227,21 @@ Output should be formatted as json such as this:
 				updatedAt: new Date()
 			};
 			reports.push(report);
+
+			// Store metadata (not persisted)
+			metadata.set(publisherId, {
+				originalText: aiReport.originalText,
+				matchConfidence: aiReport.matchConfidence,
+				reportedBy: aiReport.reportedBy,
+				reasoning: aiReport.reasoning
+			});
 		});
 
-		return { newPublishers, reports };
+		return {
+			newPublishers,
+			reports,
+			metadata,
+			globalReasoning: aiResponse.reasoning
+		};
 	}
 }

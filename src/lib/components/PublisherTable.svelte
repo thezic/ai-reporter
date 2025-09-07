@@ -1,12 +1,15 @@
 <script lang="ts">
 	import TableRow from '$lib/components/TableRow.svelte';
 	import type { Publisher, Report } from '$lib/types';
+	import type { ReportMetadata } from '$lib/services/AIService';
 	import { flip } from 'svelte/animate';
 
 	interface Props {
 		publishers: Publisher[];
 		reports: Report[];
 		isEditMode: boolean;
+		reportMetadata: Map<string, ReportMetadata>;
+		globalReasoning: string;
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
@@ -18,6 +21,8 @@
 		publishers,
 		reports,
 		isEditMode,
+		reportMetadata,
+		globalReasoning,
 		onToggleEditMode,
 		onUpdateReport,
 		onUpdatePublisher,
@@ -34,6 +39,8 @@
 		return parts.length > 1 ? parts[parts.length - 1] : parts[0];
 	}
 
+	$effect(() => console.log(reportMetadata));
+
 	const sortedPublishers = $derived(
 		[...publishers].sort((a, b) => {
 			const lastNameA = extractLastName(a.name).toLowerCase();
@@ -41,6 +48,19 @@
 			return lastNameA.localeCompare(lastNameB);
 		})
 	);
+
+	function getTooltipContent(publisherId: string): string {
+		const metadata = reportMetadata.get(publisherId);
+		if (!metadata) return '';
+
+		const parts = [];
+		if (metadata.originalText) parts.push(`Original: ${metadata.originalText}`);
+		parts.push(`Confidence: ${metadata.matchConfidence}`);
+		parts.push(`Reported by: ${metadata.reportedBy}`);
+		if (metadata.reasoning) parts.push(`Reasoning: ${metadata.reasoning}`);
+
+		return parts.join('\n');
+	}
 </script>
 
 <div class="overflow-hidden rounded-lg bg-white shadow">
@@ -69,7 +89,11 @@
 			</thead>
 			<tbody>
 				{#each sortedPublishers as publisher (publisher.id)}
-					<tr class="border-b hover:bg-gray-50" animate:flip={{ duration: 400 }}>
+					<tr
+						class="border-b hover:bg-gray-50"
+						animate:flip={{ duration: 400 }}
+						title={getTooltipContent(publisher.id)}
+					>
 						<td class="p-3">
 							<input
 								type="text"
