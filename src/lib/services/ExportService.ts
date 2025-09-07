@@ -1,4 +1,5 @@
 import type { CombinedData } from '$lib/types';
+import * as XLSX from 'xlsx';
 
 export class ExportService {
 	exportToCsv(data: CombinedData[]): void {
@@ -19,45 +20,37 @@ export class ExportService {
 	}
 
 	exportToExcel(data: CombinedData[]): void {
+		// Create workbook and worksheet
+		const workbook = XLSX.utils.book_new();
+
+		// Prepare data with headers
 		const headers = ['Name', 'Active', 'Hours', 'Comment'];
-
-		let excelContent = `<?xml version="1.0"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
- xmlns:o="urn:schemas-microsoft-com:office:office"
- xmlns:x="urn:schemas-microsoft-com:office:excel"
- xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
- xmlns:html="http://www.w3.org/TR/REC-html40">
- <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-  <Title>AI Reporter Data</Title>
- </DocumentProperties>
- <Worksheet ss:Name="Publishers">
-  <Table>
-   <Row>`;
-
-		headers.forEach((header) => {
-			excelContent += `<Cell><Data ss:Type="String">${header}</Data></Cell>`;
-		});
-		excelContent += '</Row>';
-
-		data.forEach((row) => {
-			excelContent += '<Row>';
-			excelContent += `<Cell><Data ss:Type="String">${this.escapeXML(row.name)}</Data></Cell>`;
-			excelContent += `<Cell><Data ss:Type="String">${
-				row.active === undefined ? '' : row.active ? 'Yes' : 'No'
-			}</Data></Cell>`;
-			excelContent += `<Cell><Data ss:Type="Number">${row.hours ?? ''}</Data></Cell>`;
-			excelContent += `<Cell><Data ss:Type="String">${this.escapeXML(
+		const worksheetData = [
+			headers,
+			...data.map((row) => [
+				row.name,
+				row.active === undefined ? '' : row.active ? 'Yes' : 'No',
+				row.hours ?? '',
 				row.comment || ''
-			)}</Data></Cell>`;
-			excelContent += '</Row>';
-		});
+			])
+		];
 
-		excelContent += `
-  </Table>
- </Worksheet>
-</Workbook>`;
+		// Create worksheet from data
+		const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-		this.downloadFile(excelContent, 'ai-reporter-data.xls', 'application/vnd.ms-excel');
+		// Set column widths for better formatting
+		worksheet['!cols'] = [
+			{ width: 25 }, // Name
+			{ width: 10 }, // Active
+			{ width: 10 }, // Hours
+			{ width: 40 } // Comment
+		];
+
+		// Add worksheet to workbook
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Publishers');
+
+		// Generate Excel file and download
+		XLSX.writeFile(workbook, 'ai-reporter-data.xlsx');
 	}
 
 	private escapeCSV(value: string): string {
@@ -65,15 +58,6 @@ export class ExportService {
 			return '"' + value.replace(/"/g, '""') + '"';
 		}
 		return value;
-	}
-
-	private escapeXML(value: string): string {
-		return value
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&apos;');
 	}
 
 	private downloadFile(content: string, filename: string, mimeType: string): void {

@@ -39,8 +39,6 @@
 		return parts.length > 1 ? parts[parts.length - 1] : parts[0];
 	}
 
-	$effect(() => console.log(reportMetadata));
-
 	const sortedPublishers = $derived(
 		[...publishers].sort((a, b) => {
 			const lastNameA = extractLastName(a.name).toLowerCase();
