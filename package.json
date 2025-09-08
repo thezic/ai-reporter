@@ -44,5 +44,9 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"dependencies": {
+		"openai": "^5.19.1",
+		"xlsx": "^0.18.5"
 	}
 }
