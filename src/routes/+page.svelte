@@ -4,18 +4,23 @@
 	import MessageInput from '$lib/components/MessageInput.svelte';
 	import PublisherTable from '$lib/components/PublisherTable.svelte';
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
+	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
+	import MobileMessagePanel from '$lib/components/MobileMessagePanel.svelte';
+	import MobilePublisherCards from '$lib/components/MobilePublisherCards.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
+	import { CardViewState } from '$lib/state/CardViewState.svelte';
 	import { AIService, type ParseResult, type ReportMetadata } from '$lib/services/AIService';
 	import { ExportService } from '$lib/services/ExportService';
 	import type { CombinedData } from '$lib/types';
 
 	const appState = new AppState();
 	const exportService = new ExportService();
+	const cardViewState = new CardViewState();
 
 	let messages = $state('');
 	let isParsingMessages = $state(false);
 	let reportMetadata = $state<Map<string, ReportMetadata>>(new Map());
-	let globalReasoning = $state<string>('');
+	let showMobilePanel = $state(false);
 
 	onMount(async () => {
 		await appState.init();
@@ -31,7 +36,7 @@
 
 		isParsingMessages = true;
 		try {
-			const aiService = new AIService(appState.settings.aiApiKey);
+			const aiService = new AIService(appState.settings.aiApiKey, appState.settings.openaiEndpoint);
 			const parseResult: ParseResult = await aiService.parseMessages(
 				messages,
 				appState.publishers.publishers
@@ -47,15 +52,13 @@
 				await appState.reports.updateReport(report.publisherId, {
 					active: report.active,
 					hours: report.hours,
+					studies: report.studies,
 					comment: report.comment
 				});
 			}
 
 			// Store metadata temporarily (not persisted)
 			reportMetadata = parseResult.metadata;
-			globalReasoning = parseResult.globalReasoning;
-
-			messages = '';
 		} catch (error) {
 			appState.error = error instanceof Error ? error.message : 'Unknown error';
 		} finally {
@@ -65,7 +68,7 @@
 
 	async function handleUpdateReport(
 		publisherId: string,
-		data: { active?: boolean; hours?: number; comment?: string }
+		data: { active?: boolean; hours?: number; studies?: number; comment?: string }
 	) {
 		await appState.reports.updateReport(publisherId, data);
 	}
@@ -94,6 +97,7 @@
 				name: publisher.name,
 				active: report?.active,
 				hours: report?.hours,
+				studies: report?.studies,
 				comment: report?.comment
 			};
 		});
@@ -122,21 +126,89 @@
 		messages = value;
 	}
 
+	function toggleMobilePanel() {
+		showMobilePanel = !showMobilePanel;
+	}
+
+	function closeMobilePanel() {
+		showMobilePanel = false;
+	}
+
 	const canParse = $derived(messages.trim().length > 0 && !!appState.settings.aiApiKey);
+	const hasMessageContent = $derived(messages.trim().length > 0);
 </script>
 
 <MainLayout>
 	{#if appState.isLoading}
 		<div class="flex items-center justify-center py-8">
 			<div
-				class="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"
+				class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900"
 			></div>
 		</div>
 	{:else}
-		<div class="space-y-6">
-			<MessageInput bind:value={messages} onInput={handleMessageInput} />
+		<!-- Desktop Layout: Side-by-side -->
+		<div class="hidden h-full gap-6 lg:flex">
+			<!-- Left Column: Message Input & Actions -->
+			<div class="flex h-full w-96 flex-shrink-0 flex-col gap-6">
+				<div class="min-h-0 flex-1">
+					<MessageInput bind:value={messages} onInput={handleMessageInput} />
+				</div>
 
-			<ActionButtons
+				<div class="flex-shrink-0">
+					<ActionButtons
+						onParse={handleParseMessages}
+						onExportCsv={handleExportCsv}
+						onExportExcel={handleExportExcel}
+						onClearReports={handleClearReports}
+						isLoading={isParsingMessages}
+						{canParse}
+					/>
+				</div>
+			</div>
+
+			<!-- Right Column: Publisher Table -->
+			<div class="h-full min-w-0 flex-1">
+				<PublisherTable
+					publishers={appState.publishers.publishers}
+					reports={appState.reports.reports}
+					isEditMode={appState.publishers.isEditMode}
+					{reportMetadata}
+					onToggleEditMode={handleToggleEditMode}
+					onUpdateReport={handleUpdateReport}
+					onUpdatePublisher={handleUpdatePublisher}
+					onAddPublisher={handleAddPublisher}
+					onDeletePublisher={handleDeletePublisher}
+				/>
+			</div>
+		</div>
+
+		<!-- Mobile Layout: Card View + Panel -->
+		<div class="h-full lg:hidden flex flex-col">
+			<!-- Mobile Card View -->
+			<div class="flex-1 overflow-y-auto pb-20">
+				<MobilePublisherCards
+					publishers={appState.publishers.publishers}
+					reports={appState.reports.reports}
+					isEditMode={appState.publishers.isEditMode}
+					{reportMetadata}
+					{cardViewState}
+					onToggleEditMode={handleToggleEditMode}
+					onUpdateReport={handleUpdateReport}
+					onUpdatePublisher={handleUpdatePublisher}
+					onAddPublisher={handleAddPublisher}
+					onDeletePublisher={handleDeletePublisher}
+				/>
+			</div>
+
+			<!-- Floating Action Button -->
+			<FloatingActionButton onClick={toggleMobilePanel} hasContent={hasMessageContent} />
+
+			<!-- Slide-in Panel -->
+			<MobileMessagePanel
+				isOpen={showMobilePanel}
+				onClose={closeMobilePanel}
+				bind:messages
+				onMessagesInput={handleMessageInput}
 				onParse={handleParseMessages}
 				onExportCsv={handleExportCsv}
 				onExportExcel={handleExportExcel}
@@ -144,30 +216,17 @@
 				isLoading={isParsingMessages}
 				{canParse}
 			/>
-
-			<PublisherTable
-				publishers={appState.publishers.publishers}
-				reports={appState.reports.reports}
-				isEditMode={appState.publishers.isEditMode}
-				{reportMetadata}
-				{globalReasoning}
-				onToggleEditMode={handleToggleEditMode}
-				onUpdateReport={handleUpdateReport}
-				onUpdatePublisher={handleUpdatePublisher}
-				onAddPublisher={handleAddPublisher}
-				onDeletePublisher={handleDeletePublisher}
-			/>
 		</div>
 
 		{#if appState.error}
 			<div
-				class="fixed right-4 bottom-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+				class="fixed right-4 bottom-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-lg"
 				role="alert"
 			>
 				<span class="block sm:inline">{appState.error}</span>
 				<button
 					onclick={appState.clearError}
-					class="float-right pl-4 text-red-500 hover:text-red-700"
+					class="float-right pl-4 text-red-600 hover:text-red-800"
 				>
 					×
 				</button>

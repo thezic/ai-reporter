@@ -18,7 +18,7 @@ export class ReportState {
 
 	async updateReport(
 		publisherId: string,
-		data: Partial<Pick<Report, 'active' | 'hours' | 'comment'>>
+		data: Partial<Pick<Report, 'active' | 'hours' | 'studies' | 'comment'>>
 	): Promise<void> {
 		const existingIndex = this.reports.findIndex((r) => r.publisherId === publisherId);
 
@@ -51,6 +51,7 @@ export class ReportState {
 			...report,
 			active: undefined,
 			hours: undefined,
+			studies: undefined,
 			comment: undefined,
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
 			updatedAt: new Date()

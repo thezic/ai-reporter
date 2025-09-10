@@ -1,52 +1,74 @@
 <script lang="ts">
 	interface Props {
 		apiKey: string;
-		onSave: (apiKey: string) => void;
+		openaiEndpoint: string;
+		onSave: (apiKey: string, openaiEndpoint: string) => void;
 		isSaving?: boolean;
 	}
 
-	let { apiKey = $bindable(), onSave, isSaving = false }: Props = $props();
+	let { apiKey = $bindable(), openaiEndpoint = $bindable(), onSave, isSaving = false }: Props = $props();
 
 	// eslint-disable-next-line svelte/prefer-writable-derived
 	let localApiKey = $state(apiKey);
+	let localOpenaiEndpoint = $state(openaiEndpoint);
 
 	function handleSave(event: SubmitEvent) {
 		event.preventDefault();
-		onSave(localApiKey);
+		onSave(localApiKey, localOpenaiEndpoint);
 	}
 
-	function handleInput(event: Event) {
+	function handleApiKeyInput(event: Event) {
 		const target = event.target as HTMLInputElement;
 		localApiKey = target.value;
 	}
 
+	function handleEndpointInput(event: Event) {
+		const target = event.target as HTMLInputElement;
+		localOpenaiEndpoint = target.value;
+	}
+
 	$effect(() => {
 		localApiKey = apiKey;
+		localOpenaiEndpoint = openaiEndpoint;
 	});
 </script>
 
-<div class="mx-auto max-w-md rounded-lg bg-white p-6 shadow">
-	<h2 class="mb-6 text-xl font-semibold text-gray-800">Settings</h2>
+<div class="mx-auto max-w-md rounded-lg bg-white p-8 shadow-sm ring-1 ring-slate-200">
+	<h2 class="mb-6 text-xl font-semibold text-slate-900">Settings</h2>
 
-	<form onsubmit={handleSave} class="space-y-4">
+	<form onsubmit={handleSave} class="space-y-6">
 		<div>
-			<label for="apiKey" class="mb-2 block text-sm font-medium text-gray-700">
+			<label for="apiKey" class="mb-3 block text-sm font-semibold text-slate-900">
 				AI Service API Key
 			</label>
 			<input
 				id="apiKey"
 				type="password"
 				value={localApiKey}
-				oninput={handleInput}
+				oninput={handleApiKeyInput}
 				placeholder="Enter your AI API key..."
-				class="w-full rounded-lg border border-gray-300 p-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
+			/>
+		</div>
+
+		<div>
+			<label for="openaiEndpoint" class="mb-3 block text-sm font-semibold text-slate-900">
+				OpenAI Endpoint
+			</label>
+			<input
+				id="openaiEndpoint"
+				type="url"
+				value={localOpenaiEndpoint}
+				oninput={handleEndpointInput}
+				placeholder="https://models.github.ai/inference"
+				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
 			/>
 		</div>
 
 		<button
 			type="submit"
 			disabled={isSaving}
-			class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400"
+			class="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
 		>
 			{#if isSaving}
 				<div

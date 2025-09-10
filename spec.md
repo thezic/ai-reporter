@@ -47,6 +47,7 @@ The table view should have the following columns:
 - Name, The name of the publisher
 - Active, yes or no. If the publisher have not yet given a report it's empty.
 - hours, the number of hours spent in service. It can be empty
+- studies, Number of a publisher have.
 - Comment, can contain any comment the publisher have given. It can be empty.
 
 All fields are editable.

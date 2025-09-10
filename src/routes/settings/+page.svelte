@@ -11,10 +11,11 @@
 		await appState.init();
 	});
 
-	async function handleSaveSettings(apiKey: string) {
+	async function handleSaveSettings(apiKey: string, openaiEndpoint: string) {
 		isSaving = true;
 		try {
 			appState.settings.aiApiKey = apiKey;
+			appState.settings.openaiEndpoint = openaiEndpoint;
 			await appState.settings.saveSettings();
 		} catch (error) {
 			alert(`Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -28,21 +29,21 @@
 	{#if appState.isLoading}
 		<div class="flex items-center justify-center py-8">
 			<div
-				class="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"
+				class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900"
 			></div>
 		</div>
 	{:else}
-		<SettingsForm bind:apiKey={appState.settings.aiApiKey} onSave={handleSaveSettings} {isSaving} />
+		<SettingsForm bind:apiKey={appState.settings.aiApiKey} bind:openaiEndpoint={appState.settings.openaiEndpoint} onSave={handleSaveSettings} {isSaving} />
 
 		{#if appState.error}
 			<div
-				class="fixed right-4 bottom-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+				class="fixed right-4 bottom-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-lg"
 				role="alert"
 			>
 				<span class="block sm:inline">{appState.error}</span>
 				<button
 					onclick={appState.clearError}
-					class="float-right pl-4 text-red-500 hover:text-red-700"
+					class="float-right pl-4 text-red-600 hover:text-red-800"
 				>
 					×
 				</button>

@@ -9,7 +9,6 @@
 		reports: Report[];
 		isEditMode: boolean;
 		reportMetadata: Map<string, ReportMetadata>;
-		globalReasoning: string;
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
@@ -22,7 +21,6 @@
 		reports,
 		isEditMode,
 		reportMetadata,
-		globalReasoning,
 		onToggleEditMode,
 		onUpdateReport,
 		onUpdatePublisher,
@@ -61,38 +59,83 @@
 	}
 </script>
 
-<div class="overflow-hidden rounded-lg bg-white shadow">
-	<div class="flex items-center justify-between border-b bg-gray-50 p-4">
-		<h2 class="text-lg font-semibold text-gray-800">Publishers</h2>
+<div
+	class="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200"
+>
+	<!-- Sticky Header -->
+	<div
+		class="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-2 py-3 md:px-6 md:py-4"
+	>
+		<h2 class="text-lg font-semibold text-slate-900">Publishers</h2>
 		<button
 			onclick={onToggleEditMode}
-			class="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
+			class={`rounded-lg p-2.5 font-medium transition-all ${
+				isEditMode
+					? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+					: 'bg-slate-700 text-white hover:bg-slate-800'
+			}`}
+			title={isEditMode ? 'Exit Edit Mode' : 'Edit Mode'}
+			aria-label={isEditMode ? 'Exit Edit Mode' : 'Edit Mode'}
 		>
-			{isEditMode ? 'Exit Edit Mode' : 'Edit Mode'}
+			<svg
+				class="h-5 w-5"
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+				></path>
+			</svg>
 		</button>
 	</div>
 
-	<div class="overflow-x-auto">
+	<!-- Scrollable Table Container -->
+	<div class="flex-1 overflow-auto">
 		<table class="w-full">
-			<thead class="bg-gray-50">
+			<!-- Sticky Table Header -->
+			<thead class="sticky top-0 z-10 bg-slate-50">
 				<tr>
-					<th class="p-3 text-left font-medium text-gray-700">Name</th>
-					<th class="p-3 text-left font-medium text-gray-700">Active</th>
-					<th class="p-3 text-left font-medium text-gray-700">Hours</th>
-					<th class="p-3 text-left font-medium text-gray-700">Comment</th>
+					<th
+						class="w-auto px-2 py-2 text-left text-sm font-semibold text-slate-900 md:px-6 md:py-4"
+						>Name</th
+					>
+					<th
+						class="w-20 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-32 md:px-6 md:py-4"
+						>Active</th
+					>
+					<th
+						class="w-16 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+						>Hours</th
+					>
+					<th
+						class="w-16 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+						>Studies</th
+					>
+					<th
+						class="w-auto px-2 py-2 text-left text-sm font-semibold text-slate-900 md:px-6 md:py-4"
+						>Comment</th
+					>
 					{#if isEditMode}
-						<th class="p-3 text-left font-medium text-gray-700">Actions</th>
+						<th
+							class="w-20 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+							>Actions</th
+						>
 					{/if}
 				</tr>
 			</thead>
 			<tbody>
 				{#each sortedPublishers as publisher (publisher.id)}
 					<tr
-						class="border-b hover:bg-gray-50"
+						class="hover:bg-slate-25 border-b border-slate-100 transition-colors"
 						animate:flip={{ duration: 400 }}
 						title={getTooltipContent(publisher.id)}
 					>
-						<td class="p-3">
+						<td class="w-auto px-2 py-2 md:px-6 md:py-4">
 							<input
 								type="text"
 								value={publisher.name}
@@ -102,27 +145,46 @@
 										onUpdatePublisher(publisher.id, { name: newName });
 									}
 								}}
-								class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
+								class="w-full rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
-						<td class="p-3">
-							<select
-								value={getReportForPublisher(publisher.id)?.active === undefined
-									? ''
-									: getReportForPublisher(publisher.id)?.active?.toString()}
-								onchange={(e) => {
-									const target = e.target as HTMLSelectElement;
-									const active = target.value === '' ? undefined : target.value === 'true';
-									onUpdateReport(publisher.id, { active });
-								}}
-								class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
-							>
-								<option value="">-</option>
-								<option value="true">Yes</option>
-								<option value="false">No</option>
-							</select>
+						<td class="w-20 px-2 py-2 md:w-32 md:px-6 md:py-4">
+							<div class="relative">
+								<select
+									value={getReportForPublisher(publisher.id)?.active === undefined
+										? ''
+										: getReportForPublisher(publisher.id)?.active?.toString()}
+									onchange={(e) => {
+										const target = e.target as HTMLSelectElement;
+										const active = target.value === '' ? undefined : target.value === 'true';
+										onUpdateReport(publisher.id, { active });
+									}}
+									class="w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-2 py-1 pr-6 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2 md:pr-10"
+								>
+									<option value="">-</option>
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
+								<div
+									class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1 md:pr-3"
+								>
+									<svg
+										class="h-3 w-3 text-slate-400 md:h-4 md:w-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 9l-7 7-7-7"
+										></path>
+									</svg>
+								</div>
+							</div>
 						</td>
-						<td class="p-3">
+						<td class="w-16 px-2 py-2 md:w-28 md:px-6 md:py-4">
 							<input
 								type="number"
 								value={getReportForPublisher(publisher.id)?.hours ?? ''}
@@ -133,10 +195,24 @@
 								}}
 								min="0"
 								step="0.5"
-								class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
-						<td class="p-3">
+						<td class="w-16 px-2 py-2 md:w-28 md:px-6 md:py-4">
+							<input
+								type="number"
+								value={getReportForPublisher(publisher.id)?.studies ?? ''}
+								oninput={(e) => {
+									const target = e.target as HTMLInputElement;
+									const studies = target.value === '' ? undefined : parseInt(target.value, 10);
+									onUpdateReport(publisher.id, { studies });
+								}}
+								min="0"
+								step="1"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
+							/>
+						</td>
+						<td class="w-auto px-2 py-2 md:px-6 md:py-4">
 							<input
 								type="text"
 								value={getReportForPublisher(publisher.id)?.comment || ''}
@@ -145,14 +221,14 @@
 									const comment = target.value;
 									onUpdateReport(publisher.id, { comment });
 								}}
-								class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
+								class="w-full rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
 						{#if isEditMode}
-							<td class="p-3">
+							<td class="w-20 px-2 py-2 md:w-28 md:px-6 md:py-4">
 								<button
 									onclick={() => onDeletePublisher && onDeletePublisher(publisher.id)}
-									class="rounded bg-red-500 px-3 py-1 text-sm text-white transition-colors hover:bg-red-600"
+									class="w-full rounded-lg bg-red-100 px-2 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200 md:px-3 md:py-2 md:text-sm"
 								>
 									Delete
 								</button>

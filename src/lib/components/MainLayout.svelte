@@ -17,10 +17,10 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-50">
+<div class="flex h-screen flex-col bg-slate-50">
 	<Header onNavigateToSettings={handleNavigateToSettings} onNavigateToHome={handleNavigateToHome} />
 
-	<main class="container mx-auto p-6">
+	<main class="flex-1 overflow-hidden px-2 py-4 md:px-6">
 		{@render children()}
 	</main>
 </div>
