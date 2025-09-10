@@ -36,7 +36,7 @@
 
 		isParsingMessages = true;
 		try {
-			const aiService = new AIService(appState.settings.aiApiKey);
+			const aiService = new AIService(appState.settings.aiApiKey, appState.settings.openaiEndpoint);
 			const parseResult: ParseResult = await aiService.parseMessages(
 				messages,
 				appState.publishers.publishers
@@ -59,8 +59,6 @@
 
 			// Store metadata temporarily (not persisted)
 			reportMetadata = parseResult.metadata;
-
-			messages = '';
 		} catch (error) {
 			appState.error = error instanceof Error ? error.message : 'Unknown error';
 		} finally {

@@ -1,27 +1,35 @@
 <script lang="ts">
 	interface Props {
 		apiKey: string;
-		onSave: (apiKey: string) => void;
+		openaiEndpoint: string;
+		onSave: (apiKey: string, openaiEndpoint: string) => void;
 		isSaving?: boolean;
 	}
 
-	let { apiKey = $bindable(), onSave, isSaving = false }: Props = $props();
+	let { apiKey = $bindable(), openaiEndpoint = $bindable(), onSave, isSaving = false }: Props = $props();
 
 	// eslint-disable-next-line svelte/prefer-writable-derived
 	let localApiKey = $state(apiKey);
+	let localOpenaiEndpoint = $state(openaiEndpoint);
 
 	function handleSave(event: SubmitEvent) {
 		event.preventDefault();
-		onSave(localApiKey);
+		onSave(localApiKey, localOpenaiEndpoint);
 	}
 
-	function handleInput(event: Event) {
+	function handleApiKeyInput(event: Event) {
 		const target = event.target as HTMLInputElement;
 		localApiKey = target.value;
 	}
 
+	function handleEndpointInput(event: Event) {
+		const target = event.target as HTMLInputElement;
+		localOpenaiEndpoint = target.value;
+	}
+
 	$effect(() => {
 		localApiKey = apiKey;
+		localOpenaiEndpoint = openaiEndpoint;
 	});
 </script>
 
@@ -37,8 +45,22 @@
 				id="apiKey"
 				type="password"
 				value={localApiKey}
-				oninput={handleInput}
+				oninput={handleApiKeyInput}
 				placeholder="Enter your AI API key..."
+				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
+			/>
+		</div>
+
+		<div>
+			<label for="openaiEndpoint" class="mb-3 block text-sm font-semibold text-slate-900">
+				OpenAI Endpoint
+			</label>
+			<input
+				id="openaiEndpoint"
+				type="url"
+				value={localOpenaiEndpoint}
+				oninput={handleEndpointInput}
+				placeholder="https://models.github.ai/inference"
 				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
 			/>
 		</div>

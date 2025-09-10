@@ -34,12 +34,15 @@ interface AIResponse {
 export class AIService {
 	private openai: OpenAI;
 
-	constructor(apiKey: string) {
+	constructor(apiKey: string, endpoint: string) {
 		if (!apiKey) {
 			throw new Error('AI API key not configured');
 		}
+		if (!endpoint) {
+			throw new Error('AI endpoint not configured');
+		}
 		this.openai = new OpenAI({
-			baseURL: 'https://models.github.ai/inference',
+			baseURL: endpoint,
 			apiKey: apiKey,
 			dangerouslyAllowBrowser: true
 		});
