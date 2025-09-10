@@ -4,6 +4,8 @@
 	import MessageInput from '$lib/components/MessageInput.svelte';
 	import PublisherTable from '$lib/components/PublisherTable.svelte';
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
+	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
+	import MobileMessagePanel from '$lib/components/MobileMessagePanel.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
 	import { AIService, type ParseResult, type ReportMetadata } from '$lib/services/AIService';
 	import { ExportService } from '$lib/services/ExportService';
@@ -15,6 +17,7 @@
 	let messages = $state('');
 	let isParsingMessages = $state(false);
 	let reportMetadata = $state<Map<string, ReportMetadata>>(new Map());
+	let showMobilePanel = $state(false);
 
 	onMount(async () => {
 		await appState.init();
@@ -122,7 +125,16 @@
 		messages = value;
 	}
 
+	function toggleMobilePanel() {
+		showMobilePanel = !showMobilePanel;
+	}
+
+	function closeMobilePanel() {
+		showMobilePanel = false;
+	}
+
 	const canParse = $derived(messages.trim().length > 0 && !!appState.settings.aiApiKey);
+	const hasMessageContent = $derived(messages.trim().length > 0);
 </script>
 
 <MainLayout>
@@ -169,36 +181,37 @@
 			</div>
 		</div>
 
-		<!-- Mobile Layout: Stacked -->
-		<div class="flex h-full flex-col gap-4 lg:hidden">
-			<!-- Messages Section -->
-			<div class="flex-shrink-0 space-y-4">
-				<MessageInput bind:value={messages} onInput={handleMessageInput} isMobile={true} />
+		<!-- Mobile Layout: Full-screen Table + Panel -->
+		<div class="h-full lg:hidden">
+			<!-- Full-screen Table -->
+			<PublisherTable
+				publishers={appState.publishers.publishers}
+				reports={appState.reports.reports}
+				isEditMode={appState.publishers.isEditMode}
+				{reportMetadata}
+				onToggleEditMode={handleToggleEditMode}
+				onUpdateReport={handleUpdateReport}
+				onUpdatePublisher={handleUpdatePublisher}
+				onAddPublisher={handleAddPublisher}
+				onDeletePublisher={handleDeletePublisher}
+			/>
 
-				<ActionButtons
-					onParse={handleParseMessages}
-					onExportCsv={handleExportCsv}
-					onExportExcel={handleExportExcel}
-					onClearReports={handleClearReports}
-					isLoading={isParsingMessages}
-					{canParse}
-				/>
-			</div>
+			<!-- Floating Action Button -->
+			<FloatingActionButton onClick={toggleMobilePanel} hasContent={hasMessageContent} />
 
-			<!-- Table Section -->
-			<div class="min-h-0 flex-1">
-				<PublisherTable
-					publishers={appState.publishers.publishers}
-					reports={appState.reports.reports}
-					isEditMode={appState.publishers.isEditMode}
-					{reportMetadata}
-					onToggleEditMode={handleToggleEditMode}
-					onUpdateReport={handleUpdateReport}
-					onUpdatePublisher={handleUpdatePublisher}
-					onAddPublisher={handleAddPublisher}
-					onDeletePublisher={handleDeletePublisher}
-				/>
-			</div>
+			<!-- Slide-in Panel -->
+			<MobileMessagePanel
+				isOpen={showMobilePanel}
+				onClose={closeMobilePanel}
+				bind:messages
+				onMessagesInput={handleMessageInput}
+				onParse={handleParseMessages}
+				onExportCsv={handleExportCsv}
+				onExportExcel={handleExportExcel}
+				onClearReports={handleClearReports}
+				isLoading={isParsingMessages}
+				{canParse}
+			/>
 		</div>
 
 		{#if appState.error}
