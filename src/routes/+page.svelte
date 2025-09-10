@@ -135,17 +135,21 @@
 	{:else}
 		<div class="flex h-full gap-6">
 			<!-- Left Column: Message Input & Actions -->
-			<div class="w-96 flex-shrink-0 space-y-6">
-				<MessageInput bind:value={messages} onInput={handleMessageInput} />
+			<div class="flex h-full w-96 flex-shrink-0 flex-col gap-6">
+				<div class="min-h-0 flex-1">
+					<MessageInput bind:value={messages} onInput={handleMessageInput} />
+				</div>
 
-				<ActionButtons
-					onParse={handleParseMessages}
-					onExportCsv={handleExportCsv}
-					onExportExcel={handleExportExcel}
-					onClearReports={handleClearReports}
-					isLoading={isParsingMessages}
-					{canParse}
-				/>
+				<div class="flex-shrink-0">
+					<ActionButtons
+						onParse={handleParseMessages}
+						onExportCsv={handleExportCsv}
+						onExportExcel={handleExportExcel}
+						onClearReports={handleClearReports}
+						isLoading={isParsingMessages}
+						{canParse}
+					/>
+				</div>
 			</div>
 
 			<!-- Right Column: Publisher Table -->
