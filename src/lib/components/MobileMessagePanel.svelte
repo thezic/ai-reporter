@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import MessageInput from './MessageInput.svelte';
 	import ActionButtons from './ActionButtons.svelte';
 
 	interface Props {
@@ -123,13 +122,24 @@
 
 	<!-- Panel Content -->
 	<div class="flex flex-1 flex-col gap-4 p-4">
+		<!-- Label -->
+		<label for="messages-mobile" class="block text-sm font-semibold text-slate-900">
+			Messages from Publishers
+		</label>
+
 		<!-- Message Input - Flexible Height -->
 		<div class="min-h-0 flex-1">
-			<MessageInput bind:value={messages} onInput={onMessagesInput} isMobile={true} />
+			<textarea
+				id="messages-mobile"
+				bind:value={messages}
+				oninput={(e) => onMessagesInput(e.target.value)}
+				placeholder="Paste multiple messages from publishers here..."
+				class="w-full h-full resize-none rounded-lg bg-slate-50 p-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200 focus:ring-offset-0 border-0"
+			></textarea>
 		</div>
 
 		<!-- Action Buttons - Fixed Height -->
-		<div class="flex-shrink-0">
+		<div class="flex-shrink-0 rounded-lg bg-slate-50 p-3">
 			<ActionButtons
 				onParse={handleParse}
 				{onExportCsv}
@@ -137,6 +147,7 @@
 				{onClearReports}
 				{isLoading}
 				{canParse}
+				isMobile={true}
 			/>
 		</div>
 	</div>

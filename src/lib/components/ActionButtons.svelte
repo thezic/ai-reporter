@@ -6,6 +6,7 @@
 		onClearReports: () => void;
 		isLoading?: boolean;
 		canParse?: boolean;
+		isMobile?: boolean;
 	}
 
 	let {
@@ -14,11 +15,12 @@
 		onExportExcel,
 		onClearReports,
 		isLoading = false,
-		canParse = true
+		canParse = true,
+		isMobile = false
 	}: Props = $props();
 </script>
 
-<div class="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200">
+<div class={isMobile ? '' : 'rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200'}>
 	<div class="space-y-4">
 		<!-- Primary Action -->
 		<button
@@ -39,14 +41,24 @@
 			<div class="flex gap-3">
 				<button
 					onclick={onExportCsv}
-					class="flex-1 rounded-lg bg-slate-100 px-4 py-2.5 font-medium text-slate-700 transition-colors hover:bg-slate-200"
+					class={[
+						'flex-1 rounded-lg px-4 py-2.5 font-medium text-slate-700 transition-colors',
+						isMobile 
+							? 'border border-slate-300 bg-transparent hover:bg-slate-100' 
+							: 'bg-slate-100 hover:bg-slate-200'
+					]}
 				>
 					Export CSV
 				</button>
 
 				<button
 					onclick={onExportExcel}
-					class="flex-1 rounded-lg bg-slate-100 px-4 py-2.5 font-medium text-slate-700 transition-colors hover:bg-slate-200"
+					class={[
+						'flex-1 rounded-lg px-4 py-2.5 font-medium text-slate-700 transition-colors',
+						isMobile 
+							? 'border border-slate-300 bg-transparent hover:bg-slate-100' 
+							: 'bg-slate-100 hover:bg-slate-200'
+					]}
 				>
 					Export Excel
 				</button>
