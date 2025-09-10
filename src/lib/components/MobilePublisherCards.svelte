@@ -96,9 +96,9 @@
 		</button>
 	</div>
 
-	<!-- Cards Container -->
-	<div class="space-y-2">
-		{#each sortedPublishers as publisher (publisher.id)}
+	<!-- Main Publishers Group -->
+	<div class="rounded-lg bg-white shadow-sm overflow-hidden">
+		{#each sortedPublishers as publisher, index (publisher.id)}
 			<div animate:flip={{ duration: 400 }}>
 				<PublisherCard
 					{publisher}
@@ -110,32 +110,33 @@
 					{onUpdateReport}
 					{onUpdatePublisher}
 					{onDeletePublisher}
+					isLast={index === sortedPublishers.length - 1}
 				/>
 			</div>
 		{/each}
-
-		<!-- Add New Publisher Card (Edit Mode Only) -->
-		{#if isEditMode}
-			<div class="rounded-lg border border-dashed border-slate-300 bg-white p-3">
-				<div class="space-y-3">
-					<label for="new-publisher-name" class="block text-sm font-medium text-slate-700">Add New Publisher</label>
-					<input
-						id="new-publisher-name"
-						type="text"
-						bind:value={newPublisherName}
-						onkeydown={handleNewPublisherKeydown}
-						placeholder="Enter publisher name"
-						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-					/>
-					<button
-						onclick={handleAddNewPublisher}
-						disabled={!newPublisherName.trim()}
-						class="w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
-					>
-						Add Publisher
-					</button>
-				</div>
-			</div>
-		{/if}
 	</div>
+
+	<!-- Add New Publisher Card (Edit Mode Only) -->
+	{#if isEditMode}
+		<div class="mt-4 rounded-lg bg-white shadow-sm p-4">
+			<div class="space-y-3">
+				<label for="new-publisher-name" class="block text-sm font-medium text-slate-700">Add New Publisher</label>
+				<input
+					id="new-publisher-name"
+					type="text"
+					bind:value={newPublisherName}
+					onkeydown={handleNewPublisherKeydown}
+					placeholder="Enter publisher name"
+					class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+				/>
+				<button
+					onclick={handleAddNewPublisher}
+					disabled={!newPublisherName.trim()}
+					class="w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
+				>
+					Add Publisher
+				</button>
+			</div>
+		</div>
+	{/if}
 </div>

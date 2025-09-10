@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StatusBadge from '$lib/components/StatusBadge.svelte';
+	import StatusDot from '$lib/components/StatusDot.svelte';
 	import HoursBadge from '$lib/components/HoursBadge.svelte';
 	import StudiesBadge from '$lib/components/StudiesBadge.svelte';
 	import type { Publisher, Report } from '$lib/types';
@@ -15,6 +15,7 @@
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
 		onDeletePublisher: (publisherId: string) => void;
+		isLast?: boolean;
 	}
 
 	let {
@@ -26,7 +27,8 @@
 		onToggleExpansion,
 		onUpdateReport,
 		onUpdatePublisher,
-		onDeletePublisher
+		onDeletePublisher,
+		isLast = false
 	}: Props = $props();
 	
 
@@ -63,10 +65,10 @@
 	}
 </script>
 
-<div class="rounded-lg border border-slate-200 bg-white shadow-sm">
+<div class={isLast ? '' : 'border-b border-slate-200'}>
 	<!-- Card Header (Always Visible) -->
 	<div
-		class="hover:bg-slate-25 w-full p-3 cursor-pointer transition-colors"
+		class="hover:bg-slate-50 w-full px-4 py-3 cursor-pointer transition-colors"
 		onclick={() => {
 			onToggleExpansion(publisher.id);
 		}}
@@ -76,15 +78,19 @@
 	>
 		<!-- Line 1: Core Data -->
 		<div class="mb-1 flex items-center gap-3">
-			<span class="flex-1 truncate font-medium text-slate-900">
-				{publisher.name}
-			</span>
-			<StatusBadge status={report?.active} />
-			<HoursBadge hours={report?.hours} />
-			<StudiesBadge studies={report?.studies} />
+			<div class="flex items-center gap-2 flex-1 min-w-0">
+				<StatusDot status={report?.active} />
+				<span class="truncate font-medium text-slate-900">
+					{publisher.name}
+				</span>
+			</div>
+			<div class="flex items-center gap-2">
+				<HoursBadge hours={report?.hours} />
+				<StudiesBadge studies={report?.studies} />
+			</div>
 			<svg
 				class={[
-					'h-4 w-4 text-slate-400 transition-transform',
+					'h-4 w-4 text-slate-400 transition-transform flex-shrink-0',
 					isExpanded ? 'rotate-90' : 'rotate-0'
 				]}
 				fill="none"
@@ -103,7 +109,7 @@
 
 	<!-- Expanded Content -->
 	{#if isExpanded}
-		<div class="space-y-3 border-t border-slate-100 p-3">
+		<div class="space-y-3 border-t border-slate-100 px-4 py-3">
 			<!-- Editable Fields -->
 			<div class="space-y-3">
 				<!-- Name Field -->

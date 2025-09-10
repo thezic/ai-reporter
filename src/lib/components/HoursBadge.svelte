@@ -7,7 +7,7 @@
 </script>
 
 {#if hours && hours > 0}
-	<span class="text-sm font-medium text-slate-700">
+	<span class="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">
 		{hours}h
 	</span>
 {/if}

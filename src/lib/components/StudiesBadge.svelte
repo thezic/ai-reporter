@@ -8,6 +8,6 @@
 
 {#if studies && studies > 0}
 	<span class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
-		[{studies}]
+		{studies}
 	</span>
 {/if}
