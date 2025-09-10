@@ -170,9 +170,9 @@
 		</div>
 
 		<!-- Mobile Layout: Stacked -->
-		<div class="flex h-full flex-col gap-6 lg:hidden">
+		<div class="flex h-full flex-col gap-4 lg:hidden">
 			<!-- Messages Section -->
-			<div class="flex-shrink-0 space-y-6">
+			<div class="flex-shrink-0 space-y-4">
 				<MessageInput bind:value={messages} onInput={handleMessageInput} isMobile={true} />
 
 				<ActionButtons

@@ -64,7 +64,7 @@
 >
 	<!-- Sticky Header -->
 	<div
-		class="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4"
+		class="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-2 py-3 md:px-6 md:py-4"
 	>
 		<h2 class="text-lg font-semibold text-slate-900">Publishers</h2>
 		<button
@@ -100,13 +100,31 @@
 			<!-- Sticky Table Header -->
 			<thead class="sticky top-0 z-10 bg-slate-50">
 				<tr>
-					<th class="w-auto px-6 py-4 text-left text-sm font-semibold text-slate-900">Name</th>
-					<th class="w-32 px-6 py-4 text-left text-sm font-semibold text-slate-900">Active</th>
-					<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Hours</th>
-					<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Studies</th>
-					<th class="w-auto px-6 py-4 text-left text-sm font-semibold text-slate-900">Comment</th>
+					<th
+						class="w-auto px-2 py-2 text-left text-sm font-semibold text-slate-900 md:px-6 md:py-4"
+						>Name</th
+					>
+					<th
+						class="w-20 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-32 md:px-6 md:py-4"
+						>Active</th
+					>
+					<th
+						class="w-16 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+						>Hours</th
+					>
+					<th
+						class="w-16 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+						>Studies</th
+					>
+					<th
+						class="w-auto px-2 py-2 text-left text-sm font-semibold text-slate-900 md:px-6 md:py-4"
+						>Comment</th
+					>
 					{#if isEditMode}
-						<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Actions</th>
+						<th
+							class="w-20 px-2 py-2 text-left text-sm font-semibold text-slate-900 md:w-28 md:px-6 md:py-4"
+							>Actions</th
+						>
 					{/if}
 				</tr>
 			</thead>
@@ -117,7 +135,7 @@
 						animate:flip={{ duration: 400 }}
 						title={getTooltipContent(publisher.id)}
 					>
-						<td class="w-auto px-6 py-4">
+						<td class="w-auto px-2 py-2 md:px-6 md:py-4">
 							<input
 								type="text"
 								value={publisher.name}
@@ -127,10 +145,10 @@
 										onUpdatePublisher(publisher.id, { name: newName });
 									}
 								}}
-								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
-						<td class="w-32 px-6 py-4">
+						<td class="w-20 px-2 py-2 md:w-32 md:px-6 md:py-4">
 							<div class="relative">
 								<select
 									value={getReportForPublisher(publisher.id)?.active === undefined
@@ -141,20 +159,32 @@
 										const active = target.value === '' ? undefined : target.value === 'true';
 										onUpdateReport(publisher.id, { active });
 									}}
-									class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 pr-10 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 appearance-none bg-white"
+									class="w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-2 py-1 pr-6 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2 md:pr-10"
 								>
 									<option value="">-</option>
 									<option value="true">Yes</option>
 									<option value="false">No</option>
 								</select>
-								<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-									<svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								<div
+									class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1 md:pr-3"
+								>
+									<svg
+										class="h-3 w-3 text-slate-400 md:h-4 md:w-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 9l-7 7-7-7"
+										></path>
 									</svg>
 								</div>
 							</div>
 						</td>
-						<td class="w-28 px-6 py-4">
+						<td class="w-16 px-2 py-2 md:w-28 md:px-6 md:py-4">
 							<input
 								type="number"
 								value={getReportForPublisher(publisher.id)?.hours ?? ''}
@@ -165,10 +195,10 @@
 								}}
 								min="0"
 								step="0.5"
-								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
-						<td class="w-28 px-6 py-4">
+						<td class="w-16 px-2 py-2 md:w-28 md:px-6 md:py-4">
 							<input
 								type="number"
 								value={getReportForPublisher(publisher.id)?.studies ?? ''}
@@ -179,10 +209,10 @@
 								}}
 								min="0"
 								step="1"
-								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
-						<td class="w-auto px-6 py-4">
+						<td class="w-auto px-2 py-2 md:px-6 md:py-4">
 							<input
 								type="text"
 								value={getReportForPublisher(publisher.id)?.comment || ''}
@@ -191,14 +221,14 @@
 									const comment = target.value;
 									onUpdateReport(publisher.id, { comment });
 								}}
-								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full rounded-lg border border-slate-300 px-2 py-1 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:px-3 md:py-2"
 							/>
 						</td>
 						{#if isEditMode}
-							<td class="w-28 px-6 py-4">
+							<td class="w-20 px-2 py-2 md:w-28 md:px-6 md:py-4">
 								<button
 									onclick={() => onDeletePublisher && onDeletePublisher(publisher.id)}
-									class="w-full rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200"
+									class="w-full rounded-lg bg-red-100 px-2 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200 md:px-3 md:py-2 md:text-sm"
 								>
 									Delete
 								</button>
