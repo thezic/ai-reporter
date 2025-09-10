@@ -30,7 +30,8 @@
 		onDeletePublisher,
 		isLast = false
 	}: Props = $props();
-	
+
+	const isEmpty = $derived(report?.active == undefined);
 
 	function handleNameUpdate(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -65,10 +66,20 @@
 	}
 </script>
 
-<div class={isLast ? '' : 'border-b border-slate-200'}>
+<div
+	class={[
+		isLast ? '' : 'border-b border-slate-200',
+		isEmpty ? 'bg-slate-25' : '',
+		'border-l-2',
+		isEmpty ? 'border-l-orange-300' : 'border-l-transparent'
+	]}
+>
 	<!-- Card Header (Always Visible) -->
 	<div
-		class="hover:bg-slate-50 w-full px-4 py-3 cursor-pointer transition-colors"
+		class={[
+			'w-full cursor-pointer px-4 py-3 transition-colors',
+			isEmpty ? 'hover:bg-slate-50' : 'hover:bg-slate-50'
+		]}
 		onclick={() => {
 			onToggleExpansion(publisher.id);
 		}}
@@ -78,9 +89,9 @@
 	>
 		<!-- Line 1: Core Data -->
 		<div class="mb-1 flex items-center gap-3">
-			<div class="flex items-center gap-2 flex-1 min-w-0">
+			<div class="flex min-w-0 flex-1 items-center gap-2">
 				<StatusDot status={report?.active} />
-				<span class="truncate font-medium text-slate-900">
+				<span class={['truncate font-medium', isEmpty ? 'text-slate-600' : 'text-slate-900']}>
 					{publisher.name}
 				</span>
 			</div>
@@ -90,7 +101,7 @@
 			</div>
 			<svg
 				class={[
-					'h-4 w-4 text-slate-400 transition-transform flex-shrink-0',
+					'h-4 w-4 flex-shrink-0 text-slate-400 transition-transform',
 					isExpanded ? 'rotate-90' : 'rotate-0'
 				]}
 				fill="none"
@@ -114,7 +125,9 @@
 			<div class="space-y-3">
 				<!-- Name Field -->
 				<div>
-					<label for={`name-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700">Name</label>
+					<label for={`name-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700"
+						>Name</label
+					>
 					<input
 						id={`name-${publisher.id}`}
 						type="text"
@@ -126,7 +139,10 @@
 
 				<!-- Active Field -->
 				<div>
-					<label for={`active-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700">Active</label>
+					<label
+						for={`active-${publisher.id}`}
+						class="mb-1 block text-xs font-medium text-slate-700">Active</label
+					>
 					<select
 						id={`active-${publisher.id}`}
 						value={report?.active === undefined ? '' : report.active.toString()}
@@ -142,7 +158,10 @@
 				<!-- Hours and Studies (Side by Side) -->
 				<div class="grid grid-cols-2 gap-3">
 					<div>
-						<label for={`hours-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700">Hours</label>
+						<label
+							for={`hours-${publisher.id}`}
+							class="mb-1 block text-xs font-medium text-slate-700">Hours</label
+						>
 						<input
 							id={`hours-${publisher.id}`}
 							type="number"
@@ -154,7 +173,10 @@
 						/>
 					</div>
 					<div>
-						<label for={`studies-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700">Studies</label>
+						<label
+							for={`studies-${publisher.id}`}
+							class="mb-1 block text-xs font-medium text-slate-700">Studies</label
+						>
 						<input
 							id={`studies-${publisher.id}`}
 							type="number"
@@ -169,7 +191,10 @@
 
 				<!-- Comment Field -->
 				<div>
-					<label for={`comment-${publisher.id}`} class="mb-1 block text-xs font-medium text-slate-700">Comment</label>
+					<label
+						for={`comment-${publisher.id}`}
+						class="mb-1 block text-xs font-medium text-slate-700">Comment</label
+					>
 					<input
 						id={`comment-${publisher.id}`}
 						type="text"
