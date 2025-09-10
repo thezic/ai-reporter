@@ -133,7 +133,8 @@
 			></div>
 		</div>
 	{:else}
-		<div class="flex h-full gap-6">
+		<!-- Desktop Layout: Side-by-side -->
+		<div class="hidden h-full gap-6 lg:flex">
 			<!-- Left Column: Message Input & Actions -->
 			<div class="flex h-full w-96 flex-shrink-0 flex-col gap-6">
 				<div class="min-h-0 flex-1">
@@ -154,6 +155,38 @@
 
 			<!-- Right Column: Publisher Table -->
 			<div class="h-full min-w-0 flex-1">
+				<PublisherTable
+					publishers={appState.publishers.publishers}
+					reports={appState.reports.reports}
+					isEditMode={appState.publishers.isEditMode}
+					{reportMetadata}
+					onToggleEditMode={handleToggleEditMode}
+					onUpdateReport={handleUpdateReport}
+					onUpdatePublisher={handleUpdatePublisher}
+					onAddPublisher={handleAddPublisher}
+					onDeletePublisher={handleDeletePublisher}
+				/>
+			</div>
+		</div>
+
+		<!-- Mobile Layout: Stacked -->
+		<div class="flex h-full flex-col gap-6 lg:hidden">
+			<!-- Messages Section -->
+			<div class="flex-shrink-0 space-y-6">
+				<MessageInput bind:value={messages} onInput={handleMessageInput} isMobile={true} />
+
+				<ActionButtons
+					onParse={handleParseMessages}
+					onExportCsv={handleExportCsv}
+					onExportExcel={handleExportExcel}
+					onClearReports={handleClearReports}
+					isLoading={isParsingMessages}
+					{canParse}
+				/>
+			</div>
+
+			<!-- Table Section -->
+			<div class="min-h-0 flex-1">
 				<PublisherTable
 					publishers={appState.publishers.publishers}
 					reports={appState.reports.reports}

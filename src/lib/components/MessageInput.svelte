@@ -2,9 +2,10 @@
 	interface Props {
 		value: string;
 		onInput: (value: string) => void;
+		isMobile?: boolean;
 	}
 
-	let { value = $bindable(), onInput }: Props = $props();
+	let { value = $bindable(), onInput, isMobile = false }: Props = $props();
 
 	function handleInput(event: Event) {
 		const target = event.target as HTMLTextAreaElement;
@@ -13,7 +14,12 @@
 	}
 </script>
 
-<div class="flex h-full flex-col rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200">
+<div
+	class={[
+		'rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200',
+		!isMobile && 'flex h-full flex-col'
+	]}
+>
 	<label for="messages" class="mb-3 block text-sm font-semibold text-slate-900">
 		Messages from Publishers
 	</label>
@@ -22,6 +28,9 @@
 		{value}
 		oninput={handleInput}
 		placeholder="Paste multiple messages from publishers here..."
-		class="w-full flex-1 resize-none rounded-lg border border-slate-300 p-4 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
+		class={[
+			'w-full resize-none rounded-lg border border-slate-300 p-4 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0',
+			isMobile ? 'h-32' : 'flex-1'
+		]}
 	></textarea>
 </div>
