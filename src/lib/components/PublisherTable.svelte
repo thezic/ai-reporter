@@ -131,21 +131,28 @@
 							/>
 						</td>
 						<td class="w-32 px-6 py-4">
-							<select
-								value={getReportForPublisher(publisher.id)?.active === undefined
-									? ''
-									: getReportForPublisher(publisher.id)?.active?.toString()}
-								onchange={(e) => {
-									const target = e.target as HTMLSelectElement;
-									const active = target.value === '' ? undefined : target.value === 'true';
-									onUpdateReport(publisher.id, { active });
-								}}
-								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-							>
-								<option value="">-</option>
-								<option value="true">Yes</option>
-								<option value="false">No</option>
-							</select>
+							<div class="relative">
+								<select
+									value={getReportForPublisher(publisher.id)?.active === undefined
+										? ''
+										: getReportForPublisher(publisher.id)?.active?.toString()}
+									onchange={(e) => {
+										const target = e.target as HTMLSelectElement;
+										const active = target.value === '' ? undefined : target.value === 'true';
+										onUpdateReport(publisher.id, { active });
+									}}
+									class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 pr-10 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 appearance-none bg-white"
+								>
+									<option value="">-</option>
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
+								<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+									<svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+									</svg>
+								</div>
+							</div>
 						</td>
 						<td class="w-28 px-6 py-4">
 							<input
