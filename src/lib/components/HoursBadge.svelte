@@ -6,6 +6,8 @@
 	let { hours }: Props = $props();
 </script>
 
-<span class="text-sm font-medium text-slate-700">
-	{hours ?? 0}h
-</span>
+{#if hours && hours > 0}
+	<span class="text-sm font-medium text-slate-700">
+		{hours}h
+	</span>
+{/if}

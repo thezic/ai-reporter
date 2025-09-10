@@ -16,11 +16,14 @@
 
 <div
 	class={[
-		'rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200',
-		!isMobile && 'flex h-full flex-col'
+		'rounded-lg bg-white shadow-sm ring-1 ring-slate-200',
+		isMobile ? 'p-3 flex flex-col h-full' : 'p-6 flex h-full flex-col'
 	]}
 >
-	<label for="messages" class="mb-3 block text-sm font-semibold text-slate-900">
+	<label for="messages" class={[
+		'block text-sm font-semibold text-slate-900',
+		isMobile ? 'mb-2' : 'mb-3'
+	]}>
 		Messages from Publishers
 	</label>
 	<textarea
@@ -30,7 +33,7 @@
 		placeholder="Paste multiple messages from publishers here..."
 		class={[
 			'w-full resize-none rounded-lg border border-slate-300 p-4 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0',
-			isMobile ? 'h-32' : 'flex-1'
+			isMobile ? 'flex-1' : 'flex-1'
 		]}
 	></textarea>
 </div>

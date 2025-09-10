@@ -122,7 +122,7 @@
 	</div>
 
 	<!-- Panel Content -->
-	<div class="flex flex-1 flex-col gap-3 p-4">
+	<div class="flex flex-1 flex-col gap-4 p-4">
 		<!-- Message Input - Flexible Height -->
 		<div class="min-h-0 flex-1">
 			<MessageInput bind:value={messages} onInput={onMessagesInput} isMobile={true} />
