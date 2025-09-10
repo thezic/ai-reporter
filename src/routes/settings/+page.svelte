@@ -11,11 +11,12 @@
 		await appState.init();
 	});
 
-	async function handleSaveSettings(apiKey: string, openaiEndpoint: string) {
+	async function handleSaveSettings(apiKey: string, openaiEndpoint: string, language: string) {
 		isSaving = true;
 		try {
 			appState.settings.aiApiKey = apiKey;
 			appState.settings.openaiEndpoint = openaiEndpoint;
+			appState.settings.language = language as import('$lib/constants/languages').SupportedLanguage;
 			await appState.settings.saveSettings();
 		} catch (error) {
 			alert(`Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -33,7 +34,13 @@
 			></div>
 		</div>
 	{:else}
-		<SettingsForm bind:apiKey={appState.settings.aiApiKey} bind:openaiEndpoint={appState.settings.openaiEndpoint} onSave={handleSaveSettings} {isSaving} />
+		<SettingsForm
+			bind:apiKey={appState.settings.aiApiKey}
+			bind:openaiEndpoint={appState.settings.openaiEndpoint}
+			bind:language={appState.settings.language}
+			onSave={handleSaveSettings}
+			{isSaving}
+		/>
 
 		{#if appState.error}
 			<div

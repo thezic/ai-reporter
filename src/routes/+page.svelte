@@ -39,7 +39,8 @@
 			const aiService = new AIService(appState.settings.aiApiKey, appState.settings.openaiEndpoint);
 			const parseResult: ParseResult = await aiService.parseMessages(
 				messages,
-				appState.publishers.publishers
+				appState.publishers.publishers,
+				appState.settings.language
 			);
 
 			// First, add any new publishers to the publisher list
@@ -105,12 +106,12 @@
 
 	function handleExportCsv() {
 		const data = getCombinedData();
-		exportService.exportToCsv(data);
+		exportService.exportToCsv(data, appState.settings.language);
 	}
 
 	function handleExportExcel() {
 		const data = getCombinedData();
-		exportService.exportToExcel(data);
+		exportService.exportToExcel(data, appState.settings.language);
 	}
 
 	async function handleClearReports() {
@@ -183,7 +184,7 @@
 		</div>
 
 		<!-- Mobile Layout: Card View + Panel -->
-		<div class="h-full lg:hidden flex flex-col">
+		<div class="flex h-full flex-col lg:hidden">
 			<!-- Mobile Card View -->
 			<div class="flex-1 overflow-y-auto pb-20">
 				<MobilePublisherCards

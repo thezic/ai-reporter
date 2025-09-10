@@ -17,6 +17,7 @@ export interface Report {
 export interface Settings {
 	aiApiKey: string;
 	openaiEndpoint: string;
+	language: string;
 }
 
 export interface CombinedData {

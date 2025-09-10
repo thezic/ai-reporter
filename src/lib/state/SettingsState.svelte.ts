@@ -1,9 +1,11 @@
 import { LocalStorageService } from '$lib/services/LocalStorageService';
 import type { Settings } from '$lib/types';
+import type { SupportedLanguage } from '$lib/constants/languages';
 
 export class SettingsState {
 	aiApiKey = $state('');
 	openaiEndpoint = $state('https://models.github.ai/inference');
+	language = $state<SupportedLanguage>('en');
 	private storageService = new LocalStorageService();
 	private readonly storageKey = 'ai-reporter-settings';
 
@@ -12,13 +14,15 @@ export class SettingsState {
 		if (settings) {
 			this.aiApiKey = settings.aiApiKey;
 			this.openaiEndpoint = settings.openaiEndpoint || 'https://models.github.ai/inference';
+			this.language = (settings.language as SupportedLanguage) || 'en';
 		}
 	}
 
 	async saveSettings(): Promise<void> {
 		const settings: Settings = {
 			aiApiKey: this.aiApiKey,
-			openaiEndpoint: this.openaiEndpoint
+			openaiEndpoint: this.openaiEndpoint,
+			language: this.language
 		};
 		await this.storageService.save(this.storageKey, settings);
 	}
