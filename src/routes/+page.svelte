@@ -133,9 +133,9 @@
 			></div>
 		</div>
 	{:else}
-		<div class="flex flex-col gap-8 lg:flex-row lg:gap-10">
-			<!-- Left Column: Message Input & Actions (40%) -->
-			<div class="flex-shrink-0 space-y-6 lg:w-2/5">
+		<div class="flex h-full gap-6">
+			<!-- Left Column: Message Input & Actions -->
+			<div class="w-96 flex-shrink-0 space-y-6">
 				<MessageInput bind:value={messages} onInput={handleMessageInput} />
 
 				<ActionButtons
@@ -148,8 +148,8 @@
 				/>
 			</div>
 
-			<!-- Right Column: Publisher Table (60%) -->
-			<div class="min-w-0 flex-1 lg:w-3/5">
+			<!-- Right Column: Publisher Table -->
+			<div class="h-full min-w-0 flex-1">
 				<PublisherTable
 					publishers={appState.publishers.publishers}
 					reports={appState.reports.reports}

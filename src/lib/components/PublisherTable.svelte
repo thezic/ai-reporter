@@ -59,8 +59,13 @@
 	}
 </script>
 
-<div class="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-	<div class="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
+<div
+	class="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200"
+>
+	<!-- Sticky Header -->
+	<div
+		class="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4"
+	>
 		<h2 class="text-lg font-semibold text-slate-900">Publishers</h2>
 		<button
 			onclick={onToggleEditMode}
@@ -89,9 +94,11 @@
 		</button>
 	</div>
 
-	<div class="overflow-x-auto">
+	<!-- Scrollable Table Container -->
+	<div class="flex-1 overflow-auto">
 		<table class="w-full">
-			<thead class="bg-slate-50">
+			<!-- Sticky Table Header -->
+			<thead class="sticky top-0 z-10 bg-slate-50">
 				<tr>
 					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Name</th>
 					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Active</th>
