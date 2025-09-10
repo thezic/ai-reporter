@@ -134,12 +134,12 @@
 				bind:value={messages}
 				oninput={(e) => onMessagesInput(e.target.value)}
 				placeholder="Paste multiple messages from publishers here..."
-				class="w-full h-full resize-none rounded-lg bg-slate-50 p-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200 focus:ring-offset-0 border-0"
+				class="w-full h-full resize-none rounded-lg bg-slate-50 p-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200 focus:ring-offset-0 border border-slate-300"
 			></textarea>
 		</div>
 
 		<!-- Action Buttons - Fixed Height -->
-		<div class="flex-shrink-0 rounded-lg bg-slate-50 p-3">
+		<div class="flex-shrink-0">
 			<ActionButtons
 				onParse={handleParse}
 				{onExportCsv}

@@ -97,7 +97,7 @@
 
 		<!-- Line 2: Comment -->
 		<div class="truncate text-sm text-slate-600">
-			{report?.comment || 'No comment yet'}
+			{report?.comment || '\u00A0'}
 		</div>
 	</div>
 
