@@ -6,13 +6,16 @@
 	import ActionButtons from '$lib/components/ActionButtons.svelte';
 	import FloatingActionButton from '$lib/components/FloatingActionButton.svelte';
 	import MobileMessagePanel from '$lib/components/MobileMessagePanel.svelte';
+	import MobilePublisherCards from '$lib/components/MobilePublisherCards.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
+	import { CardViewState } from '$lib/state/CardViewState.svelte';
 	import { AIService, type ParseResult, type ReportMetadata } from '$lib/services/AIService';
 	import { ExportService } from '$lib/services/ExportService';
 	import type { CombinedData } from '$lib/types';
 
 	const appState = new AppState();
 	const exportService = new ExportService();
+	const cardViewState = new CardViewState();
 
 	let messages = $state('');
 	let isParsingMessages = $state(false);
@@ -181,20 +184,23 @@
 			</div>
 		</div>
 
-		<!-- Mobile Layout: Full-screen Table + Panel -->
-		<div class="h-full lg:hidden">
-			<!-- Full-screen Table -->
-			<PublisherTable
-				publishers={appState.publishers.publishers}
-				reports={appState.reports.reports}
-				isEditMode={appState.publishers.isEditMode}
-				{reportMetadata}
-				onToggleEditMode={handleToggleEditMode}
-				onUpdateReport={handleUpdateReport}
-				onUpdatePublisher={handleUpdatePublisher}
-				onAddPublisher={handleAddPublisher}
-				onDeletePublisher={handleDeletePublisher}
-			/>
+		<!-- Mobile Layout: Card View + Panel -->
+		<div class="h-full lg:hidden flex flex-col">
+			<!-- Mobile Card View -->
+			<div class="flex-1 overflow-y-auto pb-20">
+				<MobilePublisherCards
+					publishers={appState.publishers.publishers}
+					reports={appState.reports.reports}
+					isEditMode={appState.publishers.isEditMode}
+					{reportMetadata}
+					{cardViewState}
+					onToggleEditMode={handleToggleEditMode}
+					onUpdateReport={handleUpdateReport}
+					onUpdatePublisher={handleUpdatePublisher}
+					onAddPublisher={handleAddPublisher}
+					onDeletePublisher={handleDeletePublisher}
+				/>
+			</div>
 
 			<!-- Floating Action Button -->
 			<FloatingActionButton onClick={toggleMobilePanel} hasContent={hasMessageContent} />
