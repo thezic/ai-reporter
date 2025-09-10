@@ -17,10 +17,10 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-slate-50">
 	<Header onNavigateToSettings={handleNavigateToSettings} onNavigateToHome={handleNavigateToHome} />
 
-	<main class="container mx-auto p-6">
+	<main class="container mx-auto p-6 lg:p-8">
 		{@render children()}
 	</main>
 </div>

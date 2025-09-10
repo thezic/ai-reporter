@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 
 export class ExportService {
 	exportToCsv(data: CombinedData[]): void {
-		const headers = ['Name', 'Active', 'Hours', 'Comment'];
+		const headers = ['Name', 'Active', 'Hours', 'Studies', 'Comment'];
 		const csvContent = [
 			headers.join(','),
 			...data.map((row) =>
@@ -11,6 +11,7 @@ export class ExportService {
 					this.escapeCSV(row.name),
 					row.active === undefined ? '' : row.active ? 'Yes' : 'No',
 					row.hours ?? '',
+					row.studies ?? '',
 					this.escapeCSV(row.comment || '')
 				].join(',')
 			)
@@ -24,13 +25,14 @@ export class ExportService {
 		const workbook = XLSX.utils.book_new();
 
 		// Prepare data with headers
-		const headers = ['Name', 'Active', 'Hours', 'Comment'];
+		const headers = ['Name', 'Active', 'Hours', 'Studies', 'Comment'];
 		const worksheetData = [
 			headers,
 			...data.map((row) => [
 				row.name,
 				row.active === undefined ? '' : row.active ? 'Yes' : 'No',
 				row.hours ?? '',
+				row.studies ?? '',
 				row.comment || ''
 			])
 		];
@@ -43,6 +45,7 @@ export class ExportService {
 			{ width: 25 }, // Name
 			{ width: 10 }, // Active
 			{ width: 10 }, // Hours
+			{ width: 10 }, // Studies
 			{ width: 40 } // Comment
 		];
 

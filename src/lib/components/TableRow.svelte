@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Publisher, Report } from '$lib/types';
-	import { flip } from 'svelte/animate';
 
 	interface Props {
 		publisher?: Publisher;
@@ -27,6 +26,7 @@
 	let name = $state(publisher?.name || '');
 	let active = $state(report?.active ?? undefined);
 	let hours = $state(report?.hours ?? undefined);
+	let studies = $state(report?.studies ?? undefined);
 	let comment = $state(report?.comment || '');
 
 	let isUpdating = false;
@@ -42,6 +42,7 @@
 		if (!isUpdating) {
 			active = report?.active ?? undefined;
 			hours = report?.hours ?? undefined;
+			studies = report?.studies ?? undefined;
 			comment = report?.comment || '';
 		}
 	});
@@ -57,7 +58,7 @@
 
 	function handleReportUpdate() {
 		if (publisher && !isNewRow) {
-			onUpdateReport(publisher.id, { active, hours, comment });
+			onUpdateReport(publisher.id, { active, hours, studies, comment });
 		}
 	}
 
@@ -81,6 +82,16 @@
 		}, 0);
 	}
 
+	function handleStudiesChange(event: Event) {
+		isUpdating = true;
+		const target = event.target as HTMLInputElement;
+		studies = target.value === '' ? undefined : parseInt(target.value, 10);
+		handleReportUpdate();
+		setTimeout(() => {
+			isUpdating = false;
+		}, 0);
+	}
+
 	function handleCommentBlur() {
 		isUpdating = true;
 		handleReportUpdate();
@@ -96,24 +107,24 @@
 	}
 </script>
 
-<tr class="border-b hover:bg-gray-50">
-	<td class="p-3">
+<tr class="hover:bg-slate-25 border-b border-slate-100 transition-colors">
+	<td class="px-6 py-4">
 		<input
 			type="text"
 			bind:value={name}
 			onblur={handleNameBlur}
 			readonly={false}
-			class="w-full rounded border border-gray-300 p-2 focus:border-blue-500"
+			class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 			placeholder={isNewRow ? 'Enter publisher name...' : ''}
 		/>
 	</td>
 
-	<td class="p-3">
+	<td class="px-6 py-4">
 		<select
 			value={active === undefined ? '' : active.toString()}
 			onchange={handleActiveChange}
 			disabled={isNewRow}
-			class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 disabled:bg-gray-100"
+			class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-500"
 		>
 			<option value="">-</option>
 			<option value="true">Yes</option>
@@ -121,7 +132,7 @@
 		</select>
 	</td>
 
-	<td class="p-3">
+	<td class="px-6 py-4">
 		<input
 			type="number"
 			value={hours ?? ''}
@@ -129,25 +140,37 @@
 			disabled={isNewRow}
 			min="0"
 			step="0.5"
-			class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 disabled:bg-gray-100"
+			class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-500"
 		/>
 	</td>
 
-	<td class="p-3">
+	<td class="px-6 py-4">
+		<input
+			type="number"
+			value={studies ?? ''}
+			oninput={handleStudiesChange}
+			disabled={isNewRow}
+			min="0"
+			step="1"
+			class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-500"
+		/>
+	</td>
+
+	<td class="px-6 py-4">
 		<input
 			type="text"
 			bind:value={comment}
 			onblur={handleCommentBlur}
 			disabled={isNewRow}
-			class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 disabled:bg-gray-100"
+			class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-500"
 		/>
 	</td>
 
 	{#if isEditMode && !isNewRow}
-		<td class="p-3">
+		<td class="px-6 py-4">
 			<button
 				onclick={handleDelete}
-				class="rounded bg-red-500 px-3 py-1 text-sm text-white transition-colors hover:bg-red-600"
+				class="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200"
 			>
 				Delete
 			</button>

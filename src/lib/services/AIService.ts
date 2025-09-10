@@ -82,8 +82,8 @@ using this list with publisher names:
 		} catch (error) {
 			// Handle specific OpenAI/AI provider errors
 			if (error && typeof error === 'object' && 'status' in error) {
-				const status = (error as any).status;
-				const message = (error as any).message || 'Unknown AI service error';
+				const status = (error as { status: number }).status;
+				const message = (error as { message?: string }).message || 'Unknown AI service error';
 
 				switch (status) {
 					case 429:
@@ -223,6 +223,7 @@ Output should be formatted as json such as this:
 				publisherId,
 				active: aiReport.isActive,
 				hours: aiReport.hours,
+				studies: aiReport.studies,
 				comment: aiReport.comment || '',
 				updatedAt: new Date()
 			};
@@ -235,6 +236,13 @@ Output should be formatted as json such as this:
 				reportedBy: aiReport.reportedBy,
 				reasoning: aiReport.reasoning
 			});
+		});
+
+		console.log('parwsed data', {
+			newPublishers,
+			reports,
+			metadata,
+			globalReasoning: aiResponse.reasoning
 		});
 
 		return {

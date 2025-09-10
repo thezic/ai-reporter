@@ -15,7 +15,6 @@
 	let messages = $state('');
 	let isParsingMessages = $state(false);
 	let reportMetadata = $state<Map<string, ReportMetadata>>(new Map());
-	let globalReasoning = $state<string>('');
 
 	onMount(async () => {
 		await appState.init();
@@ -47,13 +46,13 @@
 				await appState.reports.updateReport(report.publisherId, {
 					active: report.active,
 					hours: report.hours,
+					studies: report.studies,
 					comment: report.comment
 				});
 			}
 
 			// Store metadata temporarily (not persisted)
 			reportMetadata = parseResult.metadata;
-			globalReasoning = parseResult.globalReasoning;
 
 			messages = '';
 		} catch (error) {
@@ -65,7 +64,7 @@
 
 	async function handleUpdateReport(
 		publisherId: string,
-		data: { active?: boolean; hours?: number; comment?: string }
+		data: { active?: boolean; hours?: number; studies?: number; comment?: string }
 	) {
 		await appState.reports.updateReport(publisherId, data);
 	}
@@ -94,6 +93,7 @@
 				name: publisher.name,
 				active: report?.active,
 				hours: report?.hours,
+				studies: report?.studies,
 				comment: report?.comment
 			};
 		});
@@ -129,45 +129,50 @@
 	{#if appState.isLoading}
 		<div class="flex items-center justify-center py-8">
 			<div
-				class="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"
+				class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900"
 			></div>
 		</div>
 	{:else}
-		<div class="space-y-6">
-			<MessageInput bind:value={messages} onInput={handleMessageInput} />
+		<div class="flex flex-col gap-8 lg:flex-row lg:gap-10">
+			<!-- Left Column: Message Input & Actions (40%) -->
+			<div class="flex-shrink-0 space-y-6 lg:w-2/5">
+				<MessageInput bind:value={messages} onInput={handleMessageInput} />
 
-			<ActionButtons
-				onParse={handleParseMessages}
-				onExportCsv={handleExportCsv}
-				onExportExcel={handleExportExcel}
-				onClearReports={handleClearReports}
-				isLoading={isParsingMessages}
-				{canParse}
-			/>
+				<ActionButtons
+					onParse={handleParseMessages}
+					onExportCsv={handleExportCsv}
+					onExportExcel={handleExportExcel}
+					onClearReports={handleClearReports}
+					isLoading={isParsingMessages}
+					{canParse}
+				/>
+			</div>
 
-			<PublisherTable
-				publishers={appState.publishers.publishers}
-				reports={appState.reports.reports}
-				isEditMode={appState.publishers.isEditMode}
-				{reportMetadata}
-				{globalReasoning}
-				onToggleEditMode={handleToggleEditMode}
-				onUpdateReport={handleUpdateReport}
-				onUpdatePublisher={handleUpdatePublisher}
-				onAddPublisher={handleAddPublisher}
-				onDeletePublisher={handleDeletePublisher}
-			/>
+			<!-- Right Column: Publisher Table (60%) -->
+			<div class="min-w-0 flex-1 lg:w-3/5">
+				<PublisherTable
+					publishers={appState.publishers.publishers}
+					reports={appState.reports.reports}
+					isEditMode={appState.publishers.isEditMode}
+					{reportMetadata}
+					onToggleEditMode={handleToggleEditMode}
+					onUpdateReport={handleUpdateReport}
+					onUpdatePublisher={handleUpdatePublisher}
+					onAddPublisher={handleAddPublisher}
+					onDeletePublisher={handleDeletePublisher}
+				/>
+			</div>
 		</div>
 
 		{#if appState.error}
 			<div
-				class="fixed right-4 bottom-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+				class="fixed right-4 bottom-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-lg"
 				role="alert"
 			>
 				<span class="block sm:inline">{appState.error}</span>
 				<button
 					onclick={appState.clearError}
-					class="float-right pl-4 text-red-500 hover:text-red-700"
+					class="float-right pl-4 text-red-600 hover:text-red-800"
 				>
 					×
 				</button>
