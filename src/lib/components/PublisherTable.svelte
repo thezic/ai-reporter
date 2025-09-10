@@ -100,13 +100,13 @@
 			<!-- Sticky Table Header -->
 			<thead class="sticky top-0 z-10 bg-slate-50">
 				<tr>
-					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Name</th>
-					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Active</th>
-					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Hours</th>
-					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Studies</th>
-					<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Comment</th>
+					<th class="w-auto px-6 py-4 text-left text-sm font-semibold text-slate-900">Name</th>
+					<th class="w-32 px-6 py-4 text-left text-sm font-semibold text-slate-900">Active</th>
+					<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Hours</th>
+					<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Studies</th>
+					<th class="w-auto px-6 py-4 text-left text-sm font-semibold text-slate-900">Comment</th>
 					{#if isEditMode}
-						<th class="px-6 py-4 text-left text-sm font-semibold text-slate-900">Actions</th>
+						<th class="w-28 px-6 py-4 text-left text-sm font-semibold text-slate-900">Actions</th>
 					{/if}
 				</tr>
 			</thead>
@@ -117,7 +117,7 @@
 						animate:flip={{ duration: 400 }}
 						title={getTooltipContent(publisher.id)}
 					>
-						<td class="px-6 py-4">
+						<td class="w-auto px-6 py-4">
 							<input
 								type="text"
 								value={publisher.name}
@@ -130,7 +130,7 @@
 								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 							/>
 						</td>
-						<td class="px-6 py-4">
+						<td class="w-32 px-6 py-4">
 							<select
 								value={getReportForPublisher(publisher.id)?.active === undefined
 									? ''
@@ -140,14 +140,14 @@
 									const active = target.value === '' ? undefined : target.value === 'true';
 									onUpdateReport(publisher.id, { active });
 								}}
-								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 							>
 								<option value="">-</option>
 								<option value="true">Yes</option>
 								<option value="false">No</option>
 							</select>
 						</td>
-						<td class="px-6 py-4">
+						<td class="w-28 px-6 py-4">
 							<input
 								type="number"
 								value={getReportForPublisher(publisher.id)?.hours ?? ''}
@@ -158,10 +158,10 @@
 								}}
 								min="0"
 								step="0.5"
-								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 							/>
 						</td>
-						<td class="px-6 py-4">
+						<td class="w-28 px-6 py-4">
 							<input
 								type="number"
 								value={getReportForPublisher(publisher.id)?.studies ?? ''}
@@ -172,10 +172,10 @@
 								}}
 								min="0"
 								step="1"
-								class="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+								class="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 transition-colors focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 							/>
 						</td>
-						<td class="px-6 py-4">
+						<td class="w-auto px-6 py-4">
 							<input
 								type="text"
 								value={getReportForPublisher(publisher.id)?.comment || ''}
@@ -188,10 +188,10 @@
 							/>
 						</td>
 						{#if isEditMode}
-							<td class="px-6 py-4">
+							<td class="w-28 px-6 py-4">
 								<button
 									onclick={() => onDeletePublisher && onDeletePublisher(publisher.id)}
-									class="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200"
+									class="w-full rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200"
 								>
 									Delete
 								</button>
