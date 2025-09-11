@@ -206,14 +206,14 @@
 				rows="1"
 				class="w-full resize-none overflow-hidden rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
 				style="min-height: 48px;"
-				placeholder={mode === 'bulk-detect' || mode === 'bulk-preview' 
+				placeholder={mode === 'bulk-detect' || mode === 'bulk-preview'
 					? 'Enter publisher names (one per line, or separated by semicolons)...'
-					: mode === 'collapsed' 
-						? '👤 Add publisher name...' 
-						: '👤 Enter publisher name...'}
+					: mode === 'collapsed'
+						? 'Add publisher name...'
+						: 'Enter publisher name...'}
 			></textarea>
 		</div>
-		
+
 		<!-- Dynamic button based on mode -->
 		{#if mode === 'collapsed'}
 			<button
@@ -221,7 +221,7 @@
 					mode = 'single';
 					if (textareaElement) textareaElement.focus();
 				}}
-				class="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-700 text-white transition-colors hover:bg-slate-800"
+				class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-600 text-white transition-colors hover:bg-emerald-700"
 				aria-label="Add publisher"
 			>
 				<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,20 +250,25 @@
 			<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
 				<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"
 				></circle>
-				<path
-					fill="currentColor"
-					d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-					class="opacity-75"
+				<path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" class="opacity-75"
 				></path>
 			</svg>
-			🔍 Processing names...
+			Processing names...
 		</div>
 	{/if}
 
 	{#if mode === 'bulk-preview'}
-		<div class="mt-4 space-y-3">
-			<div class="text-sm font-medium text-slate-700">
-				📋 Preview: {validatedNames.length} names detected
+		<div class="mt-4 space-y-4">
+			<div class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+				<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+					/>
+				</svg>
+				Preview: {validatedNames.length} names detected
 			</div>
 
 			<div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -271,10 +276,34 @@
 					{#each validatedNames as item (item.name)}
 						<div class="flex items-center gap-2">
 							{#if item.isDuplicate}
-								<span class="text-amber-600">🔄</span>
+								<svg
+									class="h-4 w-4 text-amber-600"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+									/>
+								</svg>
 								<span class="text-sm text-amber-700">{item.name} (duplicate)</span>
 							{:else}
-								<span class="text-emerald-600">✅</span>
+								<svg
+									class="h-4 w-4 text-emerald-600"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M5 13l4 4L19 7"
+									/>
+								</svg>
 								<span class="text-sm text-slate-900">{item.name}</span>
 							{/if}
 						</div>
@@ -285,25 +314,49 @@
 			<div class="flex flex-wrap gap-3">
 				<button
 					onclick={handleEdit}
-					class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+					class="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
 				>
-					📝 Edit
+					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+						/>
+					</svg>
+					Edit
 				</button>
 
 				{#if validCount > 0}
 					<button
 						onclick={handleBulkAdd}
-						class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+						class="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
 					>
-						➕ Add Valid ({validCount})
+						<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+							/>
+						</svg>
+						Add Valid ({validCount})
 					</button>
 				{/if}
 
 				<button
 					onclick={handleCancel}
-					class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+					class="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
 				>
-					✖ Cancel
+					<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+					Cancel
 				</button>
 			</div>
 
