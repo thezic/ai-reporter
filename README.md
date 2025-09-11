@@ -47,6 +47,7 @@ The application follows the Flux pattern with Svelte 5's reactive state manageme
 
 1. Clone the repository
 2. Install dependencies:
+
    ```sh
    pnpm install
    ```
@@ -67,20 +68,24 @@ pnpm dev -- --open
 ### Available Commands
 
 **Development:**
+
 - `pnpm dev` - Start development server
 - `pnpm dev -- --open` - Start dev server and open in browser
 
 **Code Quality:**
+
 - `pnpm lint` - Run Prettier check and ESLint
 - `pnpm format` - Format code with Prettier
 - `pnpm check` - Run Svelte type checking
 - `pnpm check:watch` - Run type checking in watch mode
 
 **Testing:**
+
 - `pnpm test` - Run all tests once
 - `pnpm test:unit` - Run tests in watch mode
 
 **Build:**
+
 - `pnpm build` - Create production build
 - `pnpm preview` - Preview production build
 
@@ -106,11 +111,13 @@ pnpm dev -- --open
 ### Settings
 
 Access the Settings page to configure:
+
 - OpenAI API key for AI service integration
 
 ## AI Integration
 
 The application uses a sophisticated prompt system defined in `reports.prompt.yml` to:
+
 - Match messages to existing publishers using fuzzy matching
 - Handle family reporting patterns
 - Extract structured data (hours, studies, comments)
