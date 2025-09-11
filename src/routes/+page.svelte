@@ -82,6 +82,10 @@
 		await appState.publishers.addPublisher(name);
 	}
 
+	async function handleAddMultiplePublishers(names: string[]) {
+		await appState.publishers.addMultiplePublishers(names);
+	}
+
 	async function handleDeletePublisher(publisherId: string) {
 		await appState.publishers.deletePublisher(publisherId);
 		await appState.reports.deleteReportsByPublisher(publisherId);
@@ -178,6 +182,7 @@
 					onUpdateReport={handleUpdateReport}
 					onUpdatePublisher={handleUpdatePublisher}
 					onAddPublisher={handleAddPublisher}
+					onAddPublishers={handleAddMultiplePublishers}
 					onDeletePublisher={handleDeletePublisher}
 				/>
 			</div>
@@ -197,6 +202,7 @@
 					onUpdateReport={handleUpdateReport}
 					onUpdatePublisher={handleUpdatePublisher}
 					onAddPublisher={handleAddPublisher}
+					onAddPublishers={handleAddMultiplePublishers}
 					onDeletePublisher={handleDeletePublisher}
 				/>
 			</div>

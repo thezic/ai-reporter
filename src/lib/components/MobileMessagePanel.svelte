@@ -29,7 +29,6 @@
 	}: Props = $props();
 
 	let panelElement: HTMLDivElement;
-	let inputElement: HTMLElement;
 
 	// Handle keyboard events
 	function handleKeydown(event: KeyboardEvent) {
@@ -132,7 +131,7 @@
 			<textarea
 				id="messages-mobile"
 				bind:value={messages}
-				oninput={(e) => onMessagesInput(e.target.value)}
+				oninput={(e) => onMessagesInput((e.target as HTMLTextAreaElement).value)}
 				placeholder="Paste multiple messages from publishers here..."
 				class="h-full w-full resize-none rounded-lg border border-slate-300 bg-slate-50 p-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
 			></textarea>

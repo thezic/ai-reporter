@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TableRow from '$lib/components/TableRow.svelte';
+	import SmartPublisherEntry from '$lib/components/SmartPublisherEntry.svelte';
 	import type { Publisher, Report } from '$lib/types';
 	import type { ReportMetadata } from '$lib/services/AIService';
 	import { flip } from 'svelte/animate';
@@ -12,7 +12,8 @@
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
-		onAddPublisher: (name: string) => void;
+		onAddPublisher: (name: string) => Promise<void>;
+		onAddPublishers: (names: string[]) => Promise<void>;
 		onDeletePublisher: (publisherId: string) => void;
 	}
 
@@ -25,6 +26,7 @@
 		onUpdateReport,
 		onUpdatePublisher,
 		onAddPublisher,
+		onAddPublishers,
 		onDeletePublisher
 	}: Props = $props();
 
@@ -92,6 +94,11 @@
 				></path>
 			</svg>
 		</button>
+	</div>
+
+	<!-- Smart Publisher Entry -->
+	<div class="flex-shrink-0 border-b border-slate-200 px-2 py-4 md:px-6">
+		<SmartPublisherEntry {publishers} {onAddPublisher} {onAddPublishers} />
 	</div>
 
 	<!-- Scrollable Table Container -->
@@ -236,10 +243,6 @@
 						{/if}
 					</tr>
 				{/each}
-
-				{#if isEditMode}
-					<TableRow isNewRow={true} {isEditMode} {onUpdateReport} {onAddPublisher} />
-				{/if}
 			</tbody>
 		</table>
 	</div>
