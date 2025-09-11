@@ -17,13 +17,13 @@
 <div
 	class={[
 		'rounded-lg bg-white shadow-sm ring-1 ring-slate-200',
-		isMobile ? 'p-3 flex flex-col h-full' : 'p-6 flex h-full flex-col'
+		isMobile ? 'flex h-full flex-col p-3' : 'flex h-full flex-col p-6'
 	]}
 >
-	<label for="messages" class={[
-		'block text-sm font-semibold text-slate-900',
-		isMobile ? 'mb-2' : 'mb-3'
-	]}>
+	<label
+		for="messages"
+		class={['block text-sm font-semibold text-slate-900', isMobile ? 'mb-2' : 'mb-3']}
+	>
 		Messages from Publishers
 	</label>
 	<textarea

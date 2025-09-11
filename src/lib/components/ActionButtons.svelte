@@ -43,8 +43,8 @@
 					onclick={onExportCsv}
 					class={[
 						'flex-1 rounded-lg px-4 py-2.5 font-medium text-slate-700 transition-colors',
-						isMobile 
-							? 'border border-slate-300 bg-transparent hover:bg-slate-100' 
+						isMobile
+							? 'border border-slate-300 bg-transparent hover:bg-slate-100'
 							: 'bg-slate-100 hover:bg-slate-200'
 					]}
 				>
@@ -55,8 +55,8 @@
 					onclick={onExportExcel}
 					class={[
 						'flex-1 rounded-lg px-4 py-2.5 font-medium text-slate-700 transition-colors',
-						isMobile 
-							? 'border border-slate-300 bg-transparent hover:bg-slate-100' 
+						isMobile
+							? 'border border-slate-300 bg-transparent hover:bg-slate-100'
 							: 'bg-slate-100 hover:bg-slate-200'
 					]}
 				>

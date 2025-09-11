@@ -1,39 +1,50 @@
 import type { CombinedData } from '$lib/types';
 import * as XLSX from 'xlsx';
+import { getTranslation } from '$lib/constants/languages';
 
 export class ExportService {
-	exportToCsv(data: CombinedData[]): void {
-		const headers = ['Name', 'Active', 'Hours', 'Studies', 'Comment'];
+	exportToCsv(data: CombinedData[], language: string = 'en'): void {
+		const translation = getTranslation(language);
+		const headers = translation.export.headers;
 		const csvContent = [
 			headers.join(','),
 			...data.map((row) =>
 				[
 					this.escapeCSV(row.name),
-					row.active === undefined ? '' : row.active ? 'Yes' : 'No',
-					row.hours ?? '',
-					row.studies ?? '',
-					this.escapeCSV(row.comment || '')
+					row.active === undefined
+						? translation.export.values.empty
+						: row.active
+							? translation.export.values.yes
+							: translation.export.values.no,
+					row.hours ?? translation.export.values.empty,
+					row.studies ?? translation.export.values.empty,
+					this.escapeCSV(row.comment || translation.export.values.empty)
 				].join(',')
 			)
 		].join('\n');
 
-		this.downloadFile(csvContent, 'ai-reporter-data.csv', 'text/csv');
+		this.downloadFile(csvContent, `ai-reporter-data-${language}.csv`, 'text/csv');
 	}
 
-	exportToExcel(data: CombinedData[]): void {
+	exportToExcel(data: CombinedData[], language: string = 'en'): void {
+		const translation = getTranslation(language);
 		// Create workbook and worksheet
 		const workbook = XLSX.utils.book_new();
 
 		// Prepare data with headers
-		const headers = ['Name', 'Active', 'Hours', 'Studies', 'Comment'];
+		const headers = translation.export.headers;
 		const worksheetData = [
 			headers,
 			...data.map((row) => [
 				row.name,
-				row.active === undefined ? '' : row.active ? 'Yes' : 'No',
-				row.hours ?? '',
-				row.studies ?? '',
-				row.comment || ''
+				row.active === undefined
+					? translation.export.values.empty
+					: row.active
+						? translation.export.values.yes
+						: translation.export.values.no,
+				row.hours ?? translation.export.values.empty,
+				row.studies ?? translation.export.values.empty,
+				row.comment || translation.export.values.empty
 			])
 		];
 
@@ -53,7 +64,7 @@ export class ExportService {
 		XLSX.utils.book_append_sheet(workbook, worksheet, 'Publishers');
 
 		// Generate Excel file and download
-		XLSX.writeFile(workbook, 'ai-reporter-data.xlsx');
+		XLSX.writeFile(workbook, `ai-reporter-data-${language}.xlsx`);
 	}
 
 	private escapeCSV(value: string): string {

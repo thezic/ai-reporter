@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import type { Publisher, Report } from '$lib/types';
+import { getTranslation } from '$lib/constants/languages';
 
 export interface ReportMetadata {
 	originalText?: string;
@@ -48,14 +49,21 @@ export class AIService {
 		});
 	}
 
-	async parseMessages(messages: string, publishers: Publisher[]): Promise<ParseResult> {
+	async parseMessages(
+		messages: string,
+		publishers: Publisher[],
+		language: string = 'en'
+	): Promise<ParseResult> {
 		const publisherNames = publishers.map((p) => p.name);
+		const translation = getTranslation(language);
 
 		const userPrompt = `Extract data from the following message data:
 <data>${messages}</data>
 
 using this list with publisher names:
-<publishers>${JSON.stringify(publisherNames)}</publishers>`;
+<publishers>${JSON.stringify(publisherNames)}</publishers>
+
+IMPORTANT: Output all text content (names, comments, reasoning) in ${translation.ai.languageInstruction}.`;
 
 		try {
 			const completion = await this.openai.chat.completions.create({

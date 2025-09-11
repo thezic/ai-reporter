@@ -97,7 +97,7 @@
 	</div>
 
 	<!-- Main Publishers Group -->
-	<div class="rounded-lg bg-white shadow-sm overflow-hidden">
+	<div class="overflow-hidden rounded-lg bg-white shadow-sm">
 		{#each sortedPublishers as publisher, index (publisher.id)}
 			<div animate:flip={{ duration: 400 }}>
 				<PublisherCard
@@ -118,9 +118,11 @@
 
 	<!-- Add New Publisher Card (Edit Mode Only) -->
 	{#if isEditMode}
-		<div class="mt-4 rounded-lg bg-white shadow-sm p-4">
+		<div class="mt-4 rounded-lg bg-white p-4 shadow-sm">
 			<div class="space-y-3">
-				<label for="new-publisher-name" class="block text-sm font-medium text-slate-700">Add New Publisher</label>
+				<label for="new-publisher-name" class="block text-sm font-medium text-slate-700"
+					>Add New Publisher</label
+				>
 				<input
 					id="new-publisher-name"
 					type="text"

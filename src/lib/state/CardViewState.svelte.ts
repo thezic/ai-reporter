@@ -1,8 +1,7 @@
 export class CardViewState {
 	expandedCards = $state(new Set<string>());
-	
-	constructor() {
-	}
+
+	constructor() {}
 
 	toggleExpansion = (publisherId: string) => {
 		if (this.expandedCards.has(publisherId)) {
@@ -14,7 +13,7 @@ export class CardViewState {
 		}
 		// Trigger reactivity
 		this.expandedCards = new Set(this.expandedCards);
-	}
+	};
 
 	collapseAll() {
 		this.expandedCards.clear();

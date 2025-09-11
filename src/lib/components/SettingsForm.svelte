@@ -1,20 +1,30 @@
 <script lang="ts">
+	import { SUPPORTED_LANGUAGES } from '$lib/constants/languages';
+
 	interface Props {
 		apiKey: string;
 		openaiEndpoint: string;
-		onSave: (apiKey: string, openaiEndpoint: string) => void;
+		language: string;
+		onSave: (apiKey: string, openaiEndpoint: string, language: string) => void;
 		isSaving?: boolean;
 	}
 
-	let { apiKey = $bindable(), openaiEndpoint = $bindable(), onSave, isSaving = false }: Props = $props();
+	let {
+		apiKey = $bindable(),
+		openaiEndpoint = $bindable(),
+		language = $bindable(),
+		onSave,
+		isSaving = false
+	}: Props = $props();
 
 	// eslint-disable-next-line svelte/prefer-writable-derived
 	let localApiKey = $state(apiKey);
 	let localOpenaiEndpoint = $state(openaiEndpoint);
+	let localLanguage = $state(language);
 
 	function handleSave(event: SubmitEvent) {
 		event.preventDefault();
-		onSave(localApiKey, localOpenaiEndpoint);
+		onSave(localApiKey, localOpenaiEndpoint, localLanguage);
 	}
 
 	function handleApiKeyInput(event: Event) {
@@ -27,9 +37,15 @@
 		localOpenaiEndpoint = target.value;
 	}
 
+	function handleLanguageChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		localLanguage = target.value;
+	}
+
 	$effect(() => {
 		localApiKey = apiKey;
 		localOpenaiEndpoint = openaiEndpoint;
+		localLanguage = language;
 	});
 </script>
 
@@ -63,6 +79,22 @@
 				placeholder="https://models.github.ai/inference"
 				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
 			/>
+		</div>
+
+		<div>
+			<label for="language" class="mb-3 block text-sm font-semibold text-slate-900">
+				Output Language
+			</label>
+			<select
+				id="language"
+				value={localLanguage}
+				onchange={handleLanguageChange}
+				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
+			>
+				{#each Object.entries(SUPPORTED_LANGUAGES) as [code, label]}
+					<option value={code}>{label}</option>
+				{/each}
+			</select>
 		</div>
 
 		<button
