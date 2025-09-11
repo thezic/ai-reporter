@@ -121,6 +121,10 @@
 			await onAddPublisher(name);
 			inputValue = '';
 			mode = 'collapsed';
+			// Reset textarea height
+			if (textareaElement) {
+				textareaElement.style.height = '48px';
+			}
 		} catch (error) {
 			console.error('Failed to add publisher:', error);
 		}
@@ -139,6 +143,10 @@
 			inputValue = '';
 			validatedNames = [];
 			mode = 'collapsed';
+			// Reset textarea height
+			if (textareaElement) {
+				textareaElement.style.height = '48px';
+			}
 		} catch (error) {
 			console.error('Failed to add publishers:', error);
 		}
@@ -148,6 +156,10 @@
 		inputValue = '';
 		validatedNames = [];
 		mode = 'collapsed';
+		// Reset textarea height
+		if (textareaElement) {
+			textareaElement.style.height = '48px';
+		}
 	}
 
 	function handleEdit() {
@@ -225,7 +237,7 @@
 			<button
 				onclick={handleSingleAdd}
 				disabled={!inputValue.trim()}
-				class="rounded-lg bg-emerald-600 px-6 py-3 text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
+				class="self-start rounded-lg bg-emerald-600 px-6 py-3 text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
 			>
 				Add
 			</button>
