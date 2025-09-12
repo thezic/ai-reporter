@@ -3,11 +3,10 @@
 
 	interface Props {
 		publishers: Publisher[];
-		onAddPublisher: (name: string) => Promise<void>;
-		onAddPublishers: (names: string[]) => Promise<void>;
+		onAddPublisher: (nameOrNames: string | string[]) => Promise<void>;
 	}
 
-	let { publishers, onAddPublisher, onAddPublishers }: Props = $props();
+	let { publishers, onAddPublisher }: Props = $props();
 
 	let inputValue = $state('');
 	let mode = $state<'collapsed' | 'single' | 'bulk-detect' | 'bulk-preview'>('collapsed');
@@ -139,7 +138,7 @@
 		}
 
 		try {
-			await onAddPublishers(validNames);
+			await onAddPublisher(validNames);
 			inputValue = '';
 			validatedNames = [];
 			mode = 'collapsed';

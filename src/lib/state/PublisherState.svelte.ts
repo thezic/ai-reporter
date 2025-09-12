@@ -17,18 +17,7 @@ export class PublisherState {
 		await this.storageService.save('publishers', this.publishers);
 	}
 
-	async addPublisher(name: string): Promise<void> {
-		const newPublisher: Publisher = {
-			id: crypto.randomUUID(),
-			name: name.trim(),
-			// eslint-disable-next-line svelte/prefer-svelte-reactivity
-			createdAt: new Date()
-		};
-		this.publishers = [...this.publishers, newPublisher];
-		await this.savePublishers();
-	}
-
-	async addMultiplePublishers(names: string[]): Promise<void> {
+	async addPublishers(names: string[]): Promise<void> {
 		const newPublishers: Publisher[] = names.map((name) => ({
 			id: crypto.randomUUID(),
 			name: name.trim(),

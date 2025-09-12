@@ -12,8 +12,7 @@
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
-		onAddPublisher: (name: string) => Promise<void>;
-		onAddPublishers: (names: string[]) => Promise<void>;
+		onAddPublisher: (nameOrNames: string | string[]) => Promise<void>;
 		onDeletePublisher: (publisherId: string) => void;
 	}
 
@@ -26,7 +25,6 @@
 		onUpdateReport,
 		onUpdatePublisher,
 		onAddPublisher,
-		onAddPublishers,
 		onDeletePublisher
 	}: Props = $props();
 
@@ -98,7 +96,7 @@
 
 	<!-- Smart Publisher Entry -->
 	<div class="flex-shrink-0 border-b border-slate-200 px-2 py-4 md:px-6">
-		<SmartPublisherEntry {publishers} {onAddPublisher} {onAddPublishers} />
+		<SmartPublisherEntry {publishers} {onAddPublisher} />
 	</div>
 
 	<!-- Scrollable Table Container -->
