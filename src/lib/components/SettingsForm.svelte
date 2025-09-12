@@ -17,7 +17,6 @@
 		isSaving = false
 	}: Props = $props();
 
-	// eslint-disable-next-line svelte/prefer-writable-derived
 	let localApiKey = $state(apiKey);
 	let localOpenaiEndpoint = $state(openaiEndpoint);
 	let localLanguage = $state(language);
@@ -91,7 +90,7 @@
 				onchange={handleLanguageChange}
 				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
 			>
-				{#each Object.entries(SUPPORTED_LANGUAGES) as [code, label]}
+				{#each Object.entries(SUPPORTED_LANGUAGES) as [code, label] (code)}
 					<option value={code}>{label}</option>
 				{/each}
 			</select>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PublisherCard from '$lib/components/PublisherCard.svelte';
+	import SmartPublisherEntry from '$lib/components/SmartPublisherEntry.svelte';
 	import type { Publisher, Report } from '$lib/types';
 	import type { ReportMetadata } from '$lib/services/AIService';
 	import type { CardViewState } from '$lib/state/CardViewState.svelte';
@@ -14,7 +15,7 @@
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
-		onAddPublisher: (name: string) => void;
+		onAddPublisher: (names: string[]) => Promise<void>;
 		onDeletePublisher: (publisherId: string) => void;
 	}
 
@@ -30,8 +31,6 @@
 		onAddPublisher,
 		onDeletePublisher
 	}: Props = $props();
-
-	let newPublisherName = $state('');
 
 	function getReportForPublisher(publisherId: string): Report | undefined {
 		return reports.find((r) => r.publisherId === publisherId);
@@ -49,19 +48,6 @@
 			return lastNameA.localeCompare(lastNameB);
 		})
 	);
-
-	function handleAddNewPublisher() {
-		if (newPublisherName.trim()) {
-			onAddPublisher(newPublisherName.trim());
-			newPublisherName = '';
-		}
-	}
-
-	function handleNewPublisherKeydown(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
-			handleAddNewPublisher();
-		}
-	}
 </script>
 
 <div>
@@ -96,6 +82,11 @@
 		</button>
 	</div>
 
+	<!-- Smart Publisher Entry -->
+	<div class="mb-4 rounded-lg bg-white p-4 shadow-sm">
+		<SmartPublisherEntry {publishers} {onAddPublisher} />
+	</div>
+
 	<!-- Main Publishers Group -->
 	<div class="overflow-hidden rounded-lg bg-white shadow-sm">
 		{#each sortedPublishers as publisher, index (publisher.id)}
@@ -115,30 +106,4 @@
 			</div>
 		{/each}
 	</div>
-
-	<!-- Add New Publisher Card (Edit Mode Only) -->
-	{#if isEditMode}
-		<div class="mt-4 rounded-lg bg-white p-4 shadow-sm">
-			<div class="space-y-3">
-				<label for="new-publisher-name" class="block text-sm font-medium text-slate-700"
-					>Add New Publisher</label
-				>
-				<input
-					id="new-publisher-name"
-					type="text"
-					bind:value={newPublisherName}
-					onkeydown={handleNewPublisherKeydown}
-					placeholder="Enter publisher name"
-					class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-				/>
-				<button
-					onclick={handleAddNewPublisher}
-					disabled={!newPublisherName.trim()}
-					class="w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
-				>
-					Add Publisher
-				</button>
-			</div>
-		</div>
-	{/if}
 </div>

@@ -17,14 +17,15 @@ export class PublisherState {
 		await this.storageService.save('publishers', this.publishers);
 	}
 
-	async addPublisher(name: string): Promise<void> {
-		const newPublisher: Publisher = {
+	async addPublishers(names: string[]): Promise<void> {
+		const newPublishers: Publisher[] = names.map((name) => ({
 			id: crypto.randomUUID(),
 			name: name.trim(),
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
 			createdAt: new Date()
-		};
-		this.publishers = [...this.publishers, newPublisher];
+		}));
+
+		this.publishers = [...this.publishers, ...newPublishers];
 		await this.savePublishers();
 	}
 

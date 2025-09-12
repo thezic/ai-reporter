@@ -78,8 +78,8 @@
 		await appState.publishers.updatePublisher(publisherId, data);
 	}
 
-	async function handleAddPublisher(name: string) {
-		await appState.publishers.addPublisher(name);
+	async function handleAddPublisher(names: string[]) {
+		await appState.publishers.addPublishers(names);
 	}
 
 	async function handleDeletePublisher(publisherId: string) {
