@@ -1,94 +1,78 @@
 <script lang="ts">
 	import { SUPPORTED_LANGUAGES } from '$lib/constants/languages';
+	import ProviderSelectionCards from '$lib/components/ProviderSelectionCards.svelte';
+	import ProviderConfigPanel from '$lib/components/ProviderConfigPanel.svelte';
+	import type { AIProviderConfig } from '$lib/types';
+	import type { SupportedLanguage } from '$lib/constants/languages';
 
 	interface Props {
-		apiKey: string;
-		openaiEndpoint: string;
-		language: string;
-		onSave: (apiKey: string, openaiEndpoint: string, language: string) => void;
+		aiProvider: AIProviderConfig;
+		language: SupportedLanguage;
+		connectionStatus: 'idle' | 'testing' | 'success' | 'error';
+		connectionError: string;
+		onProviderSelect: (providerId: string) => void;
+		onConfigUpdate: (updates: Partial<AIProviderConfig>) => void;
+		onTestConnection: () => void;
+		onSave: () => void;
+		onLanguageChange: (language: SupportedLanguage) => void;
 		isSaving?: boolean;
 	}
 
-	let {
-		apiKey = $bindable(),
-		openaiEndpoint = $bindable(),
-		language = $bindable(),
+	const {
+		aiProvider,
+		language,
+		connectionStatus,
+		connectionError,
+		onProviderSelect,
+		onConfigUpdate,
+		onTestConnection,
 		onSave,
+		onLanguageChange,
 		isSaving = false
 	}: Props = $props();
 
-	let localApiKey = $state(apiKey);
-	let localOpenaiEndpoint = $state(openaiEndpoint);
-	let localLanguage = $state(language);
-
 	function handleSave(event: SubmitEvent) {
 		event.preventDefault();
-		onSave(localApiKey, localOpenaiEndpoint, localLanguage);
-	}
-
-	function handleApiKeyInput(event: Event) {
-		const target = event.target as HTMLInputElement;
-		localApiKey = target.value;
-	}
-
-	function handleEndpointInput(event: Event) {
-		const target = event.target as HTMLInputElement;
-		localOpenaiEndpoint = target.value;
+		onSave();
 	}
 
 	function handleLanguageChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		localLanguage = target.value;
+		onLanguageChange(target.value as SupportedLanguage);
 	}
-
-	$effect(() => {
-		localApiKey = apiKey;
-		localOpenaiEndpoint = openaiEndpoint;
-		localLanguage = language;
-	});
 </script>
 
-<div class="mx-auto max-w-md rounded-lg bg-white p-8 shadow-sm ring-1 ring-slate-200">
+<div class="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-sm ring-1 ring-slate-200">
 	<h2 class="mb-6 text-xl font-semibold text-slate-900">Settings</h2>
 
-	<form onsubmit={handleSave} class="space-y-6">
-		<div>
-			<label for="apiKey" class="mb-3 block text-sm font-semibold text-slate-900">
-				AI Service API Key
-			</label>
-			<input
-				id="apiKey"
-				type="password"
-				value={localApiKey}
-				oninput={handleApiKeyInput}
-				placeholder="Enter your AI API key..."
-				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
-			/>
-		</div>
+	<form onsubmit={handleSave} class="space-y-8">
+		<!-- Provider Selection -->
+		<ProviderSelectionCards
+			selectedProvider={aiProvider.provider}
+			onProviderSelect={onProviderSelect}
+		/>
 
-		<div>
-			<label for="openaiEndpoint" class="mb-3 block text-sm font-semibold text-slate-900">
-				OpenAI Endpoint
-			</label>
-			<input
-				id="openaiEndpoint"
-				type="url"
-				value={localOpenaiEndpoint}
-				oninput={handleEndpointInput}
-				placeholder="https://models.github.ai/inference"
-				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
-			/>
-		</div>
+		<!-- Provider Configuration -->
+		<ProviderConfigPanel
+			provider={aiProvider.provider}
+			config={aiProvider}
+			onConfigUpdate={onConfigUpdate}
+			onTestConnection={onTestConnection}
+			connectionStatus={connectionStatus}
+			connectionError={connectionError}
+		/>
 
+		<!-- Language Selection -->
 		<div>
-			<label for="language" class="mb-3 block text-sm font-semibold text-slate-900">
+			<label for="language" class="block text-sm font-semibold text-slate-900">
 				Output Language
 			</label>
+			<p class="text-sm text-slate-600">Language for AI responses and generated content</p>
 			<select
 				id="language"
-				value={localLanguage}
+				value={language}
 				onchange={handleLanguageChange}
-				class="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 focus:ring-offset-0"
+				class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
 			>
 				{#each Object.entries(SUPPORTED_LANGUAGES) as [code, label] (code)}
 					<option value={code}>{label}</option>
@@ -96,17 +80,20 @@
 			</select>
 		</div>
 
-		<button
-			type="submit"
-			disabled={isSaving}
-			class="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
-		>
-			{#if isSaving}
-				<div
-					class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-				></div>
-			{/if}
-			Save Settings
-		</button>
+		<!-- Save Button -->
+		<div class="border-t pt-6">
+			<button
+				type="submit"
+				disabled={isSaving}
+				class="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500"
+			>
+				{#if isSaving}
+					<div
+						class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+					></div>
+				{/if}
+				Save Settings
+			</button>
+		</div>
 	</form>
 </div>

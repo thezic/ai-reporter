@@ -3,6 +3,8 @@
 	import MainLayout from '$lib/components/MainLayout.svelte';
 	import SettingsForm from '$lib/components/SettingsForm.svelte';
 	import { AppState } from '$lib/state/AppState.svelte';
+	import type { AIProviderConfig } from '$lib/types';
+	import type { SupportedLanguage } from '$lib/constants/languages';
 
 	const appState = new AppState();
 	let isSaving = $state(false);
@@ -11,18 +13,31 @@
 		await appState.init();
 	});
 
-	async function handleSaveSettings(apiKey: string, openaiEndpoint: string, language: string) {
+	async function handleSaveSettings() {
 		isSaving = true;
 		try {
-			appState.settings.aiApiKey = apiKey;
-			appState.settings.openaiEndpoint = openaiEndpoint;
-			appState.settings.language = language as import('$lib/constants/languages').SupportedLanguage;
 			await appState.settings.saveSettings();
 		} catch (error) {
 			alert(`Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
 		} finally {
 			isSaving = false;
 		}
+	}
+
+	function handleProviderSelect(providerId: string) {
+		appState.settings.switchProvider(providerId);
+	}
+
+	function handleConfigUpdate(updates: Partial<AIProviderConfig>) {
+		appState.settings.updateProviderConfig(updates);
+	}
+
+	function handleTestConnection() {
+		appState.settings.testConnection();
+	}
+
+	function handleLanguageChange(language: SupportedLanguage) {
+		appState.settings.language = language;
 	}
 </script>
 
@@ -35,10 +50,15 @@
 		</div>
 	{:else}
 		<SettingsForm
-			bind:apiKey={appState.settings.aiApiKey}
-			bind:openaiEndpoint={appState.settings.openaiEndpoint}
-			bind:language={appState.settings.language}
+			aiProvider={appState.settings.aiProvider}
+			language={appState.settings.language}
+			connectionStatus={appState.settings.connectionStatus}
+			connectionError={appState.settings.connectionError}
+			onProviderSelect={handleProviderSelect}
+			onConfigUpdate={handleConfigUpdate}
+			onTestConnection={handleTestConnection}
 			onSave={handleSaveSettings}
+			onLanguageChange={handleLanguageChange}
 			{isSaving}
 		/>
 

@@ -29,14 +29,14 @@
 	async function handleParseMessages() {
 		if (!messages.trim()) return;
 
-		if (!appState.settings.aiApiKey) {
-			alert('Please configure your AI API key in settings first.');
+		if (!appState.settings.isConfigured()) {
+			alert('Please configure your AI provider in settings first.');
 			return;
 		}
 
 		isParsingMessages = true;
 		try {
-			const aiService = new AIService(appState.settings.aiApiKey, appState.settings.openaiEndpoint);
+			const aiService = new AIService(appState.settings.aiProvider);
 			const parseResult: ParseResult = await aiService.parseMessages(
 				messages,
 				appState.publishers.publishers,
@@ -135,7 +135,7 @@
 		showMobilePanel = false;
 	}
 
-	const canParse = $derived(messages.trim().length > 0 && !!appState.settings.aiApiKey);
+	const canParse = $derived(messages.trim().length > 0 && appState.settings.isConfigured());
 	const hasMessageContent = $derived(messages.trim().length > 0);
 </script>
 
