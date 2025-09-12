@@ -16,15 +16,10 @@ export interface Report {
 
 // AI Provider Configuration
 export interface AIProviderConfig {
-	provider: 'openai' | 'anthropic' | 'azure' | 'github';
+	provider: 'openai' | 'anthropic' | 'github';
 	apiKey: string;
 	model: string;
 	endpoint?: string;
-	
-	// Azure specific
-	resourceName?: string;
-	deploymentName?: string;
-	apiVersion?: string;
 	
 	// Future extensibility
 	headers?: Record<string, string>;
@@ -45,6 +40,7 @@ export interface AIProviderInfo {
 export interface Settings {
 	aiProvider: AIProviderConfig;
 	language: string;
+	providerConfigs?: Record<string, AIProviderConfig>; // Provider-specific configurations
 }
 
 // Legacy Settings interface (for migration)

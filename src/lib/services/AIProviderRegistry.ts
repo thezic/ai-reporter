@@ -15,7 +15,6 @@ export class AIProviderRegistry {
 		this.registerProvider('openai', () => new OpenAIProvider());
 		this.registerProvider('anthropic', () => new AnthropicProvider());
 		this.registerProvider('github', () => new GitHubModelsProvider());
-		// TODO: Add Azure provider when implemented
 	}
 
 	/**

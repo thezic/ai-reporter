@@ -20,6 +20,9 @@ export class SettingsState {
 	connectionStatus = $state<'idle' | 'testing' | 'success' | 'error'>('idle');
 	connectionError = $state<string>('');
 
+	// Provider-specific configurations storage
+	private providerConfigs = $state<Map<string, AIProviderConfig>>(new Map());
+
 	private storageService = new LocalStorageService();
 	private readonly storageKey = 'ai-reporter-settings';
 	private readonly legacyStorageKey = 'ai-reporter-settings'; // Same key for migration
@@ -33,6 +36,14 @@ export class SettingsState {
 				// New format
 				this.aiProvider = { ...this.aiProvider, ...settings.aiProvider };
 				this.language = (settings.language as SupportedLanguage) || 'en';
+				
+				// Load provider-specific configurations
+				if (settings.providerConfigs) {
+					this.providerConfigs.clear();
+					Object.entries(settings.providerConfigs).forEach(([providerId, config]) => {
+						this.providerConfigs.set(providerId, config);
+					});
+				}
 			} else if ('aiApiKey' in settings && (settings as any).aiApiKey !== undefined) {
 				// Legacy format - migrate
 				console.log('Migrating from legacy settings format');
@@ -40,6 +51,10 @@ export class SettingsState {
 				const migratedConfig = this.migrateFromLegacySettings(legacySettings);
 				this.aiProvider = migratedConfig;
 				this.language = ((settings as any).language as SupportedLanguage) || 'en';
+				
+				// Store the migrated config in provider configs
+				this.providerConfigs.set('openai', migratedConfig);
+				
 				// Save in new format
 				await this.saveSettings();
 			} else {
@@ -52,9 +67,19 @@ export class SettingsState {
 	}
 
 	async saveSettings(): Promise<void> {
+		// Store current provider config in provider configs
+		this.providerConfigs.set(this.aiProvider.provider, { ...this.aiProvider });
+		
+		// Convert Map to Record for storage
+		const providerConfigs: Record<string, AIProviderConfig> = {};
+		this.providerConfigs.forEach((config, providerId) => {
+			providerConfigs[providerId] = config;
+		});
+
 		const settings: Settings = {
 			aiProvider: this.aiProvider,
-			language: this.language
+			language: this.language,
+			providerConfigs
 		};
 		await this.storageService.save(this.storageKey, settings);
 	}
@@ -91,16 +116,25 @@ export class SettingsState {
 			return;
 		}
 
-		const newProvider: AIProviderConfig = {
-			provider: providerId as any,
-			apiKey: '',
-			model: providerInfo.models[0] || '',
-			endpoint: providerInfo.defaultEndpoint
-		};
+		// Store current provider configuration before switching
+		this.providerConfigs.set(this.aiProvider.provider, { ...this.aiProvider });
+
+		// Check if we have a saved configuration for the new provider
+		const savedConfig = this.providerConfigs.get(providerId);
 		
-		// Keep existing API key if switching back to the same provider
-		if (this.aiProvider.provider === providerId) {
-			newProvider.apiKey = this.aiProvider.apiKey;
+		let newProvider: AIProviderConfig;
+		
+		if (savedConfig) {
+			// Use saved configuration
+			newProvider = { ...savedConfig };
+		} else {
+			// Create new configuration with defaults
+			newProvider = {
+				provider: providerId as any,
+				apiKey: '',
+				model: providerInfo.models[0] || '',
+				endpoint: providerInfo.defaultEndpoint
+			};
 		}
 
 		this.aiProvider = newProvider;
@@ -113,6 +147,10 @@ export class SettingsState {
 	 */
 	updateProviderConfig(updates: Partial<AIProviderConfig>): void {
 		this.aiProvider = { ...this.aiProvider, ...updates };
+		
+		// Store updated configuration immediately
+		this.providerConfigs.set(this.aiProvider.provider, { ...this.aiProvider });
+		
 		// Reset connection status when config changes
 		if (this.connectionStatus !== 'idle') {
 			this.connectionStatus = 'idle';
@@ -153,5 +191,9 @@ export class SettingsState {
 			endpoint: defaultProvider.defaultEndpoint
 		};
 		this.language = 'en';
+		
+		// Initialize provider configs with default
+		this.providerConfigs.clear();
+		this.providerConfigs.set('openai', { ...this.aiProvider });
 	}
 }

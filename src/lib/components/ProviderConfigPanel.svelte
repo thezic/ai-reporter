@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getProviderById, AZURE_API_VERSIONS } from '$lib/constants/aiProviders';
+	import { getProviderById } from '$lib/constants/aiProviders';
 	import type { AIProviderConfig } from '$lib/types';
 
 	interface Props {
@@ -147,52 +147,6 @@
 			</div>
 		{/if}
 
-		<!-- Azure-specific fields -->
-		{#if provider === 'azure'}
-			<div>
-				<label for="resourceName" class="block text-sm font-semibold text-slate-900">
-					Resource Name
-				</label>
-				<input
-					id="resourceName"
-					type="text"
-					value={config.resourceName || ''}
-					oninput={(e) => handleInputChange('resourceName', e.currentTarget.value)}
-					class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-					placeholder="Your Azure resource name"
-				/>
-			</div>
-
-			<div>
-				<label for="deploymentName" class="block text-sm font-semibold text-slate-900">
-					Deployment Name
-				</label>
-				<input
-					id="deploymentName"
-					type="text"
-					value={config.deploymentName || ''}
-					oninput={(e) => handleInputChange('deploymentName', e.currentTarget.value)}
-					class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-					placeholder="Your deployment name"
-				/>
-			</div>
-
-			<div>
-				<label for="apiVersion" class="block text-sm font-semibold text-slate-900">
-					API Version
-				</label>
-				<select
-					id="apiVersion"
-					value={config.apiVersion || AZURE_API_VERSIONS[0]}
-					onchange={(e) => handleInputChange('apiVersion', e.currentTarget.value)}
-					class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-				>
-					{#each AZURE_API_VERSIONS as version}
-						<option value={version}>{version}</option>
-					{/each}
-				</select>
-			</div>
-		{/if}
 
 		<!-- Connection Test Button -->
 		<div class="flex items-center gap-4">

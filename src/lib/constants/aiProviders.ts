@@ -18,13 +18,6 @@ export const AI_PROVIDERS: Record<string, AIProviderInfo> = {
 		defaultEndpoint: 'https://api.anthropic.com',
 		configFields: ['apiKey', 'model']
 	},
-	azure: {
-		id: 'azure',
-		name: 'Azure OpenAI',
-		description: 'Enterprise Ready',
-		models: [], // Dynamic based on deployment
-		configFields: ['apiKey', 'resourceName', 'deploymentName', 'apiVersion']
-	},
 	github: {
 		id: 'github',
 		name: 'GitHub Models',
@@ -35,11 +28,6 @@ export const AI_PROVIDERS: Record<string, AIProviderInfo> = {
 	}
 };
 
-export const AZURE_API_VERSIONS = [
-	'2024-02-01',
-	'2023-12-01-preview', 
-	'2023-05-15'
-];
 
 export const getProviderById = (id: string): AIProviderInfo | undefined => {
 	return AI_PROVIDERS[id];
