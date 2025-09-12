@@ -3,7 +3,7 @@
 
 	interface Props {
 		publishers: Publisher[];
-		onAddPublisher: (nameOrNames: string | string[]) => Promise<void>;
+		onAddPublisher: (names: string[]) => Promise<void>;
 	}
 
 	let { publishers, onAddPublisher }: Props = $props();
@@ -117,7 +117,7 @@
 		}
 
 		try {
-			await onAddPublisher(name);
+			await onAddPublisher([name]);
 			inputValue = '';
 			mode = 'collapsed';
 			// Reset textarea height

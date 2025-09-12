@@ -12,7 +12,7 @@
 		onToggleEditMode: () => void;
 		onUpdateReport: (publisherId: string, data: Partial<Report>) => void;
 		onUpdatePublisher: (publisherId: string, data: Partial<Publisher>) => void;
-		onAddPublisher: (nameOrNames: string | string[]) => Promise<void>;
+		onAddPublisher: (names: string[]) => Promise<void>;
 		onDeletePublisher: (publisherId: string) => void;
 	}
 

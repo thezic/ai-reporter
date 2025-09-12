@@ -78,8 +78,7 @@
 		await appState.publishers.updatePublisher(publisherId, data);
 	}
 
-	async function handleAddPublisher(nameOrNames: string | string[]) {
-		const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames];
+	async function handleAddPublisher(names: string[]) {
 		await appState.publishers.addPublishers(names);
 	}
 
