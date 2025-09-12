@@ -3,7 +3,7 @@ import type { Settings, LegacySettings, AIProviderConfig } from '$lib/types';
 import type { SupportedLanguage } from '$lib/constants/languages';
 import { AIService } from '$lib/services/AIService';
 import type { ConnectionTestResult } from '$lib/services/providers/AIProviderInterface';
-import { getDefaultProvider } from '$lib/constants/aiProviders';
+import { getDefaultProvider, getProviderById } from '$lib/constants/aiProviders';
 
 export class SettingsState {
 	// New AI provider configuration
@@ -84,12 +84,18 @@ export class SettingsState {
 	 * Switch to a different AI provider
 	 */
 	switchProvider(providerId: string): void {
-		const defaultProvider = getDefaultProvider();
+		const providerInfo = getProviderById(providerId);
+		
+		if (!providerInfo) {
+			console.error(`Unknown provider: ${providerId}`);
+			return;
+		}
+
 		const newProvider: AIProviderConfig = {
 			provider: providerId as any,
 			apiKey: '',
-			model: defaultProvider.models[0] || '',
-			endpoint: defaultProvider.defaultEndpoint
+			model: providerInfo.models[0] || '',
+			endpoint: providerInfo.defaultEndpoint
 		};
 		
 		// Keep existing API key if switching back to the same provider

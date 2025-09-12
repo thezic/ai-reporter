@@ -58,7 +58,11 @@
 		<!-- API Key Field -->
 		<div>
 			<label for="apiKey" class="block text-sm font-semibold text-slate-900">
-				API Key
+				{#if provider === 'github'}
+					Personal Access Token
+				{:else}
+					API Key
+				{/if}
 			</label>
 			<div class="mt-1 relative">
 				<input
@@ -67,7 +71,7 @@
 					value={config.apiKey}
 					oninput={(e) => handleInputChange('apiKey', e.currentTarget.value)}
 					class="block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-					placeholder="Enter your API key"
+					placeholder={provider === 'github' ? 'Enter your Personal Access Token' : 'Enter your API key'}
 				/>
 				<button
 					type="button"

@@ -2,6 +2,7 @@ import type { AIProviderConfig } from '$lib/types';
 import type { AIProvider } from './providers/AIProviderInterface';
 import { OpenAIProvider } from './providers/OpenAIProvider';
 import { AnthropicProvider } from './providers/AnthropicProvider';
+import { GitHubModelsProvider } from './providers/GitHubModelsProvider';
 
 export class AIProviderRegistry {
 	private providers = new Map<string, () => AIProvider>();
@@ -13,7 +14,8 @@ export class AIProviderRegistry {
 	private registerDefaultProviders(): void {
 		this.registerProvider('openai', () => new OpenAIProvider());
 		this.registerProvider('anthropic', () => new AnthropicProvider());
-		// TODO: Add Azure and GitHub providers when implemented
+		this.registerProvider('github', () => new GitHubModelsProvider());
+		// TODO: Add Azure provider when implemented
 	}
 
 	/**
