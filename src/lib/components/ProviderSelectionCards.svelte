@@ -25,11 +25,11 @@
 	<div class="grid gap-4 sm:grid-cols-2">
 		{#each providers as provider (provider.id)}
 			<div
-				class="cursor-pointer rounded-lg border-2 p-4 transition-all duration-200 hover:shadow-md"
-				class:border-slate-200={selectedProvider !== provider.id}
-				class:bg-white={selectedProvider !== provider.id}
-				class:border-emerald-500={selectedProvider === provider.id}
-				class:bg-emerald-50={selectedProvider === provider.id}
+				class={{
+					'cursor-pointer rounded-lg border-2 p-4 transition-all duration-200 hover:shadow-md': true,
+					'border-slate-200 bg-white': selectedProvider !== provider.id,
+					'border-emerald-500 bg-emerald-50': selectedProvider === provider.id
+				}}
 				onclick={() => handleCardClick(provider)}
 				role="button"
 				tabindex="0"
@@ -47,16 +47,16 @@
 								{provider.name}
 							</h4>
 							{#if provider.isDefault}
-								<span
-									class="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700"
-								>
+								<span class="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
 									Default
 								</span>
 							{/if}
 						</div>
-						<p class="mt-1 text-sm text-slate-600">
-							{provider.description}
-						</p>
+						{#if provider.description}
+							<p class="mt-1 text-sm text-slate-600">
+								{provider.description}
+							</p>
+						{/if}
 					</div>
 					<div class="ml-4 flex-shrink-0">
 						<div

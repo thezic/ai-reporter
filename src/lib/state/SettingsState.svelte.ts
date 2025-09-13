@@ -3,6 +3,7 @@ import type { Settings, LegacySettings, AIProviderConfig } from '$lib/types';
 import type { SupportedLanguage } from '$lib/constants/languages';
 import { AIService } from '$lib/services/AIService';
 import { getDefaultProvider, getProviderById } from '$lib/constants/aiProviders';
+import { SvelteMap } from 'svelte/reactivity';
 
 export class SettingsState {
 	// New AI provider configuration
@@ -20,7 +21,7 @@ export class SettingsState {
 	connectionError = $state<string>('');
 
 	// Provider-specific configurations storage
-	private providerConfigs = $state<Map<string, AIProviderConfig>>(new Map());
+	private providerConfigs = $state<SvelteMap<string, AIProviderConfig>>(new SvelteMap());
 
 	private storageService = new LocalStorageService();
 	private readonly storageKey = 'ai-reporter-settings';
@@ -43,13 +44,17 @@ export class SettingsState {
 						this.providerConfigs.set(providerId, config);
 					});
 				}
-			} else if ('aiApiKey' in settings && (settings as LegacySettings).aiApiKey !== undefined) {
+			} else if (
+				'aiApiKey' in settings &&
+				(settings as unknown as LegacySettings).aiApiKey !== undefined
+			) {
 				// Legacy format - migrate
 				console.log('Migrating from legacy settings format');
 				const legacySettings = settings as unknown as LegacySettings;
 				const migratedConfig = this.migrateFromLegacySettings(legacySettings);
 				this.aiProvider = migratedConfig;
-				this.language = ((settings as LegacySettings).language as SupportedLanguage) || 'en';
+				this.language =
+					((settings as unknown as LegacySettings).language as SupportedLanguage) || 'en';
 
 				// Store the migrated config in provider configs
 				this.providerConfigs.set('openai', migratedConfig);

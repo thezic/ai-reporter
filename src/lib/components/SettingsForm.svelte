@@ -47,19 +47,16 @@
 
 	<form onsubmit={handleSave} class="space-y-8">
 		<!-- Provider Selection -->
-		<ProviderSelectionCards
-			selectedProvider={aiProvider.provider}
-			onProviderSelect={onProviderSelect}
-		/>
+		<ProviderSelectionCards selectedProvider={aiProvider.provider} {onProviderSelect} />
 
 		<!-- Provider Configuration -->
 		<ProviderConfigPanel
 			provider={aiProvider.provider}
 			config={aiProvider}
-			onConfigUpdate={onConfigUpdate}
-			onTestConnection={onTestConnection}
-			connectionStatus={connectionStatus}
-			connectionError={connectionError}
+			{onConfigUpdate}
+			{onTestConnection}
+			{connectionStatus}
+			{connectionError}
 		/>
 
 		<!-- Language Selection -->
@@ -72,7 +69,7 @@
 				id="language"
 				value={language}
 				onchange={handleLanguageChange}
-				class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+				class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
 			>
 				{#each Object.entries(SUPPORTED_LANGUAGES) as [code, label] (code)}
 					<option value={code}>{label}</option>
