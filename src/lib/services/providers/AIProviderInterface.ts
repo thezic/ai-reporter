@@ -22,16 +22,12 @@ export interface AIProvider {
 	/**
 	 * Creates the provider-specific client instance
 	 */
-	createClient(config: AIProviderConfig): any;
+	createClient(config: AIProviderConfig): unknown;
 
 	/**
 	 * Parses messages using the AI provider
 	 */
-	parseMessages(
-		messages: string,
-		publishers: Publisher[],
-		language: string
-	): Promise<ParseResult>;
+	parseMessages(messages: string, publishers: Publisher[], language: string): Promise<ParseResult>;
 
 	/**
 	 * Configure the provider with settings

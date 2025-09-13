@@ -20,7 +20,7 @@ export interface AIProviderConfig {
 	apiKey: string;
 	model: string;
 	endpoint?: string;
-	
+
 	// Future extensibility
 	headers?: Record<string, string>;
 }
@@ -29,7 +29,7 @@ export interface AIProviderConfig {
 export interface AIProviderInfo {
 	id: string;
 	name: string;
-	description: string;
+	description?: string;
 	models: string[];
 	defaultEndpoint?: string;
 	configFields: string[];
