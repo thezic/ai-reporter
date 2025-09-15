@@ -1,5 +1,7 @@
+import { SvelteSet } from 'svelte/reactivity';
+
 export class CardViewState {
-	expandedCards = $state(new Set<string>());
+	expandedCards = $state(new SvelteSet<string>());
 
 	constructor() {}
 
@@ -11,13 +13,10 @@ export class CardViewState {
 			this.expandedCards.clear();
 			this.expandedCards.add(publisherId);
 		}
-		// Trigger reactivity
-		this.expandedCards = new Set(this.expandedCards);
 	};
 
 	collapseAll() {
 		this.expandedCards.clear();
-		this.expandedCards = new Set(this.expandedCards);
 	}
 
 	isExpanded(publisherId: string): boolean {
